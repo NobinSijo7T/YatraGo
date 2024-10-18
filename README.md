@@ -30,13 +30,6 @@ This is a chat application where you can easily search for and find other people
 - MongoDB
 - SocketIO
 
-## About Me
-
-Name: Ritobroto Kalita
-Email: ritobroto.kalita@gmail.com
-University: IIT Kharagpur
-Department: Mechanical Engineering
-
 ## Contributions
 
 Contributions are welcome! If you have any suggestions or improvements, please feel free to submit a pull request.
