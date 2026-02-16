@@ -40,17 +40,21 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    async session({ session }) {
+    async session({ session, token }) {
+      await connectToDB();
       const mongodbUser = await User.findOne({ email: session.user.email });
-      session.user.id = mongodbUser._id.toString();
-
-      session.user = { ...session.user, ...mongodbUser._doc };
+      
+      if (mongodbUser) {
+        session.user.id = mongodbUser._id.toString();
+        session.user = { ...session.user, ...mongodbUser._doc };
+      }
 
       return session;
     },
     async jwt({ token, user }) {
       if (user) {
         token.id = user._id.toString();
+        token.email = user.email;
       }
 
       return token;

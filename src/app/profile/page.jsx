@@ -1,5 +1,5 @@
 "use client";
-import ProfilePage from "@/ui/templates/ProfilePage";
+import NewProfilePage from "@/ui/templates/NewProfilePage";
 import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -11,8 +11,8 @@ const Profile = () => {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      // Redirect to the login page if the user is not authenticated
-      router.push("/login");
+      // Redirect to the home page if the user is not authenticated
+      router.push("/");
     }
   }, [status, router]);
 
@@ -20,7 +20,7 @@ const Profile = () => {
     return <Loader />; // Show a loading state while checking the session
   }
 
-  return <ProfilePage />;
+  return <NewProfilePage />;
 };
 
 export default Profile;

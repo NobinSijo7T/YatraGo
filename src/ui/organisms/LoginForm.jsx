@@ -6,10 +6,12 @@ import Button from "../atoms/Button";
 import Texts from "../atoms/Texts";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import Link from "next/link";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -22,6 +24,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     const res = await signIn("credentials", {
       email,
@@ -35,39 +38,60 @@ const LoginForm = () => {
       router.push("/");
     } else {
       const errorMsg = res.error || "Failed to login";
-      alert(errorMsg); // Provide more information if available
+      setError(errorMsg);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col justify-center items-center p-10 bg-gradient-to-br from-fuchsia-500 to-pink-500 rounded-md"
-    >
-      <FormField
-        label="Email"
-        type="email"
-        name="form"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <FormField
-        label="Password"
-        type="password"
-        name="form"
-        placeholder="Enter your password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button type="submit" role="button" aria-label="Login Button">
-        Login
-      </Button>
+    <div className="w-full max-w-md">
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <Texts type="heading" className="mb-2">LOGIN</Texts>
+        <div className="h-2 w-24 bg-[#00D9FF] border-4 border-black mx-auto"></div>
+      </div>
 
-      <Texts type="info">
-        Not a user? <a href="/register">Sign-Up Now</a>
-      </Texts>
-    </form>
+      {/* Form Container */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white border-4 border-black text-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-8"
+      >
+        <FormField
+          label="Email"
+          type="email"
+          name="email"
+          placeholder="your.email@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <FormField
+          label="Password"
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        {error && (
+          <div className="mb-4 p-3 bg-[#FF6B6B] border-4 border-black">
+            <Texts type="error" className="text-white">{error}</Texts>
+          </div>
+        )}
+
+        <Button type="submit" name="login" aria-label="Login Button">
+          LOGIN →
+        </Button>
+
+        <div className="mt-6 text-center">
+          <Texts type="info">
+            Not a user?{" "}
+            <Link href="/register" className="font-black underline hover:text-[#00D9FF] transition-colors">
+              Sign-Up Now
+            </Link>
+          </Texts>
+        </div>
+      </form>
+    </div>
   );
 };
 
