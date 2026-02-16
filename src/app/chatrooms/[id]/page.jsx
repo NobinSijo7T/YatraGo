@@ -46,6 +46,20 @@ const ChatRoomPage = () => {
         socket.on("new-message", ({ message: newMsg, userEmail, userName }) => {
             setChatRoom(prev => {
                 if (!prev) return prev;
+                
+                // Prevent duplicate messages from current user (optimistic update already added it)
+                const recentMessages = prev.messages.slice(-5);
+                const isDuplicate = recentMessages.some(msg => 
+                    msg.sender === userEmail && 
+                    msg.content === newMsg.content &&
+                    msg.messageType === newMsg.messageType &&
+                    (Date.now() - new Date(msg.createdAt).getTime()) < 5000
+                );
+                
+                if (isDuplicate && userEmail === session?.user?.email) {
+                    return prev;
+                }
+                
                 return {
                     ...prev,
                     messages: [...prev.messages, {
@@ -64,6 +78,20 @@ const ChatRoomPage = () => {
         socket.on("new-poll", ({ poll, userEmail, userName }) => {
             setChatRoom(prev => {
                 if (!prev) return prev;
+                
+                // Prevent duplicate polls from current user
+                const recentMessages = prev.messages.slice(-5);
+                const isDuplicate = recentMessages.some(msg => 
+                    msg.sender === userEmail && 
+                    msg.content === poll.content &&
+                    msg.messageType === "poll" &&
+                    (Date.now() - new Date(msg.createdAt).getTime()) < 5000
+                );
+                
+                if (isDuplicate && userEmail === session?.user?.email) {
+                    return prev;
+                }
+                
                 return {
                     ...prev,
                     messages: [...prev.messages, {
@@ -106,6 +134,20 @@ const ChatRoomPage = () => {
         socket.on("new-tip", ({ tip, userEmail, userName }) => {
             setChatRoom(prev => {
                 if (!prev) return prev;
+                
+                // Prevent duplicate tips from current user
+                const recentMessages = prev.messages.slice(-5);
+                const isDuplicate = recentMessages.some(msg => 
+                    msg.sender === userEmail && 
+                    msg.content === tip &&
+                    msg.messageType === "tip" &&
+                    (Date.now() - new Date(msg.createdAt).getTime()) < 5000
+                );
+                
+                if (isDuplicate && userEmail === session?.user?.email) {
+                    return prev;
+                }
+                
                 return {
                     ...prev,
                     messages: [...prev.messages, {
@@ -179,6 +221,45 @@ const ChatRoomPage = () => {
             socket.off("user-typing");
         };
     }, [socket, isConnected, params.id, session]);
+
+    // Polling mechanism - fetch new messages every 3 seconds as fallback
+    useEffect(() => {
+        if (!params.id || status !== "authenticated" || !isMember) return;
+
+        const pollInterval = setInterval(async () => {
+            try {
+                const res = await fetch(`/api/chatrooms/${params.id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setChatRoom(prev => {
+                        // Only update if there are actual changes
+                        if (!prev) return data;
+                        
+                        const hasNewMessages = data.messages.length > prev.messages.length;
+                        const hasDifferentMembers = data.members.length !== prev.members.length;
+                        
+                        if (hasNewMessages || hasDifferentMembers) {
+                            return data;
+                        }
+                        
+                        // Check if poll votes changed
+                        const pollsChanged = data.messages.some((msg, idx) => {
+                            if (msg.messageType === "poll" && prev.messages[idx]?.messageType === "poll") {
+                                return JSON.stringify(msg.pollOptions) !== JSON.stringify(prev.messages[idx]?.pollOptions);
+                            }
+                            return false;
+                        });
+                        
+                        return pollsChanged ? data : prev;
+                    });
+                }
+            } catch (error) {
+                console.error("Polling error:", error);
+            }
+        }, 3000); // Poll every 3 seconds
+
+        return () => clearInterval(pollInterval);
+    }, [params.id, status, isMember]);
 
     useEffect(() => {
         scrollToBottom();
@@ -278,7 +359,26 @@ const ChatRoomPage = () => {
             if (res.ok) {
                 setShowPollModal(false);
 
-                // Emit socket event
+                // Immediately add message to local state (optimistic update)
+                const newMessage = {
+                    sender: session.user.email,
+                    senderName: session.user.name || session.user.email.split("@")[0],
+                    content: messageContent,
+                    messageType,
+                    pollOptions: messageType === "poll" ? pollOptions : undefined,
+                    createdAt: new Date(),
+                    _id: Date.now().toString(),
+                };
+
+                setChatRoom(prev => {
+                    if (!prev) return prev;
+                    return {
+                        ...prev,
+                        messages: [...prev.messages, newMessage],
+                    };
+                });
+
+                // Emit socket event for other users
                 if (socket) {
                     if (messageType === "poll") {
                         socket.emit("create-poll", {
