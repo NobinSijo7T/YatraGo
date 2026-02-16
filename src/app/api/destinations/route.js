@@ -1,40 +1,55 @@
-import { NextResponse } from "next/server";
 import { connectToDB } from "@/mongodb";
 import Destination from "@/models/Destination";
 
-export async function GET(req) {
-    try {
-        await connectToDB();
+export async function GET(request) {
+  try {
+    await connectToDB();
 
-        const { searchParams } = new URL(req.url);
-        const query = searchParams.get("query");
-        const category = searchParams.get("category");
-        const continent = searchParams.get("continent");
-        const expense = searchParams.get("expense");
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category");
 
-        let filter = {};
-        if (query) {
-            filter.$or = [
-                { name: { $regex: query, $options: "i" } },
-                { details: { $regex: query, $options: "i" } },
-                { tags: { $in: [new RegExp(query, "i")] } }
-            ];
-        }
-        if (category && category !== "all") {
-            filter.category = category;
-        }
-        if (continent && continent !== "all") {
-            filter.continent = continent;
-        }
-        if (expense && expense !== "all") {
-            filter.expense = expense;
-        }
-
-        const destinations = await Destination.find(filter).sort({ createdAt: -1 });
-
-        return NextResponse.json(destinations, { status: 200 });
-    } catch (err) {
-        console.error("ERROR_GET_DESTINATIONS", err);
-        return NextResponse.json({ message: "Failed to fetch destinations" }, { status: 500 });
+    let query = {};
+    if (category && category !== "all") {
+      query.category = category;
     }
+
+    const destinations = await Destination.find(query).sort({ createdAt: -1 });
+
+    return new Response(JSON.stringify(destinations), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error fetching destinations:", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch destinations" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
+
+export async function POST(request) {
+  try {
+    await connectToDB();
+
+    const body = await request.json();
+    const destination = await Destination.create(body);
+
+    return new Response(JSON.stringify(destination), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error creating destination:", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to create destination", details: error.message }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 }

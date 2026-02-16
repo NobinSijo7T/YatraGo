@@ -9,6 +9,12 @@ export async function GET(req) {
 
     console.log("Fetching messages for chatId:", chatId); // Debugging
 
+    // Validate chatId is a valid ObjectId
+    if (!chatId || !/^[0-9a-fA-F]{24}$/.test(chatId)) {
+      console.log("Invalid chatId, returning empty array");
+      return NextResponse.json([]);
+    }
+
     // Connect to the database
     await connectToDB();
 

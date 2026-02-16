@@ -29,12 +29,14 @@ const DiscoverPage = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      let endpoint = "/api/users/route";
+      let endpoint = "/api/users";
       if (searchQuery) {
         endpoint = `/api/users/searchOther?query=${encodeURIComponent(searchQuery)}`;
       }
       
-      const res = await fetch(endpoint);
+      const res = await fetch(endpoint, {
+        cache: 'no-store'
+      });
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : []);
     } catch (error) {

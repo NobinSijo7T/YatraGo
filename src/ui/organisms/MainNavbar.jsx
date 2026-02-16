@@ -12,7 +12,7 @@ const MainNavbar = () => {
   const navItems = [
     { name: "Discover", path: "/discover" },
     { name: "Trip Advisor", path: "/trip-advisor" },
-    { name: "Chat Rooms", path: "/chats" },
+    { name: "Chat Rooms", path: "/chatrooms" },
   ];
 
   const isActive = (path) => pathname === path;
@@ -23,8 +23,8 @@ const MainNavbar = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 bg-[#00D9FF] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all group-hover:translate-x-[-2px] group-hover:translate-y-[-2px]">
-              <img src="/logo.svg" alt="Logo" className="w-full h-full p-1" />
+            <div className="w-12 h-12 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all group-hover:translate-x-[-2px] group-hover:translate-y-[-2px]">
+              <img src="/black_ver.png" alt="Logo" className="w-full h-full p-0" />
             </div>
           </Link>
 
@@ -34,11 +34,10 @@ const MainNavbar = () => {
               <Link
                 key={item.path}
                 href={item.path}
-                className={`px-6 py-2 font-bold border-4 border-black text-black transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] ${
-                  isActive(item.path)
+                className={`px-6 py-2 font-bold border-4 border-black text-black transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] ${isActive(item.path)
                     ? "bg-[#FFC700] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     : "bg-white hover:bg-[#FFC700]"
-                }`}
+                  }`}
               >
                 {item.name}
               </Link>
@@ -92,11 +91,10 @@ const MainNavbar = () => {
                 key={item.path}
                 href={item.path}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-4 py-3 font-bold border-4 border-black text-black ${
-                  isActive(item.path)
+                className={`block px-4 py-3 font-bold border-4 border-black text-black ${isActive(item.path)
                     ? "bg-[#FFC700]"
                     : "bg-white hover:bg-[#FFC700]"
-                }`}
+                  }`}
               >
                 {item.name}
               </Link>

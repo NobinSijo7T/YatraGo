@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import MainNavbar from "@/ui/organisms/MainNavbar";
 import Provider from "@/context/Provider";
 import { useSession } from "next-auth/react";
@@ -20,6 +20,11 @@ const ProfilePageContent = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -89,6 +94,13 @@ const ProfilePageContent = () => {
     }
   };
 
+  const colors = ["#FF6B6B", "#4ADE80", "#00D9FF", "#FFC700", "#FF69B4", "#8B5CF6", "#F97316"];
+
+  const avatarColor = useMemo(() => {
+    if (!isMounted || !formData.name) return "#CCCCCC";
+    return colors[(formData.name.length || 0) % colors.length];
+  }, [formData.name, isMounted]);
+
   if (status === "loading" || loading) {
     return <Loader />;
   }
@@ -107,7 +119,10 @@ const ProfilePageContent = () => {
               className="w-32 h-32 border-8 border-black rounded-full object-cover bg-white"
             />
           ) : (
-            <div className="w-32 h-32 bg-white border-8 border-black rounded-full flex items-center justify-center font-black text-6xl">
+            <div
+              className="w-32 h-32 border-8 border-black rounded-full flex items-center justify-center font-black text-6xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]]"
+              style={{ backgroundColor: avatarColor }}
+            >
               {formData.name?.charAt(0).toUpperCase() || "?"}
             </div>
           )}
@@ -121,8 +136,8 @@ const ProfilePageContent = () => {
           <div>
             {/* Name & Edit Button */}
             <div className="text-center mb-8">
-              <h1 className="text-5xl font-black mb-2 uppercase">{formData.name}</h1>
-              <p className="text-gray-600 font-medium">{session?.user?.email}</p>
+              <h1 className="text-5xl font-black mb-2 uppercase text-black">{formData.name}</h1>
+              <p className="text-gray-800 font-bold">{session?.user?.email}</p>
               <button
                 onClick={() => setIsEditing(true)}
                 className="mt-6 px-8 py-3 bg-[#FFC700] border-4 border-black font-black text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"

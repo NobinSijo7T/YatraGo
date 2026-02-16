@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import MessageItem from "../molecules/MessageItem";
 import ChatInput from "../molecules/ChatInput";
@@ -13,8 +13,30 @@ const MessagePanel = () => {
   const [chatDetails, setChatDetails] = useState(null); // State to store chat details (name, profile pic, etc.)
   const { data: session } = useSession(); // To get the logged-in user's info
   const { chatId } = useParams(); // Assume you're using dynamic routing with chatId in the URL
+  const messagesEndRef = useRef(null);
+
+  // Scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Helper function to check if chatId is valid
+  const isValidChatId = (id) => {
+    // Check if it's a valid MongoDB ObjectId (24 hex characters)
+    return id && typeof id === 'string' && /^[0-9a-fA-F]{24}$/.test(id);
+  };
+
+  useEffect(() => {
+    // Skip socket and data fetching for invalid chatIds (like "new")
+    if (!isValidChatId(chatId)) {
+      console.log("Invalid or new chat ID, skipping data fetch");
+      return;
+    }
+
     // Call the API route to initialize the Socket.IO server
     fetch("/api/socket");
 
@@ -52,6 +74,7 @@ const MessagePanel = () => {
   // Function to handle sending a new message
   const addMessage = async (newMessage) => {
     if (newMessage.trim()) {
+      const tempId = Date.now().toString();
       const messageData = {
         content: newMessage,
         sender: session?.user?.id, // Use user ID instead of email
@@ -59,14 +82,24 @@ const MessagePanel = () => {
         timestamp: new Date().toISOString(),
       };
 
+      // Optimistic UI update - show message immediately
+      const optimisticMessage = {
+        ...messageData,
+        _id: tempId,
+        sender: {
+          _id: session?.user?.id,
+          name: session?.user?.name,
+          email: session?.user?.email
+        }
+      };
+      setMessages((prevMessages) => [...prevMessages, optimisticMessage]);
+
       console.log("Sending message:", messageData); // Debugging
 
       // Check if socket is initialized before emitting
       if (socket) {
         console.log("Emitting message via Socket.IO");
         socket.emit("sendMessage", messageData);
-      } else {
-        console.error("Socket.IO client is not initialized");
       }
 
       // Send message to the server
@@ -87,10 +120,16 @@ const MessagePanel = () => {
 
         console.log("Message saved:", savedMessage); // Debugging
 
-        // Update messages locally with the saved message from the server
-        setMessages((prevMessages) => [...prevMessages, savedMessage]);
+        // Replace optimistic message with saved message from server
+        setMessages((prevMessages) => 
+          prevMessages.map(msg => msg._id === tempId ? savedMessage : msg)
+        );
       } catch (error) {
         console.error("Error sending message:", error);
+        // Remove optimistic message on error
+        setMessages((prevMessages) => 
+          prevMessages.filter(msg => msg._id !== tempId)
+        );
       }
     }
   };
@@ -100,61 +139,109 @@ const MessagePanel = () => {
       const response = await fetch(`/api/messages?chatId=${chatId}`);
       const data = await response.json();
       console.log("Fetched messages:", data); // Debugging
-      setMessages(data);
+      // Ensure data is an array before setting messages
+      if (Array.isArray(data)) {
+        setMessages(data);
+      } else {
+        console.error("Messages data is not an array:", data);
+        setMessages([]);
+      }
     } catch (error) {
       console.error("Failed to fetch messages:", error.message);
+      setMessages([]);
     }
   };
 
   // Function to fetch chat details (name, profile picture, etc.)
   const fetchChatDetails = async () => {
     try {
-      const response = await fetch(`/api/chats/${chatId}`);
+      const userId = session?.user?.id || '';
+      const response = await fetch(`/api/chats/${chatId}?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch chat details");
+      }
       const data = await response.json();
       console.log("Fetched chat details:", data); // Debugging
       setChatDetails(data);
     } catch (error) {
       console.error("Failed to fetch chat details:", error.message);
+      setChatDetails(null);
     }
   };
 
-  return (
-    <div className="h-full flex flex-col">
-      {/* Navbar for chat details */}
-      {chatDetails && (
-        <div className="flex items-center p-3 bg-gray-200">
-          <img
-            src={
-              chatDetails.isGroup
-                ? chatDetails.groupPic
-                : chatDetails.otherUserPic
-            }
-            alt="Profile"
-            className="w-10 h-10 rounded-full"
-          />
-          <span className="ml-3 text-lg font-bold">
-            {chatDetails.isGroup
-              ? chatDetails.groupName
-              : chatDetails.otherUserName}
-          </span>
+  // Show placeholder for invalid chatId
+  if (!isValidChatId(chatId)) {
+    return (
+      <div className="h-full flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="text-8xl mb-4">💬</div>
+          <h3 className="text-2xl font-black text-black mb-2">Select a Chat</h3>
+          <p className="text-lg font-medium text-black">Choose a conversation to start messaging</p>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-3 py-1">
-        {messages.map((msg, index) => (
-          <MessageItem
-            key={index}
-            message={msg.content}
-            sender={msg.sender}
-            timestamp={msg.timestamp}
-            isOwnMessage={msg.sender === session?.user?.email} // Check if the message is sent by the current user
-          />
-        ))}
+  return (
+    <div className="h-full flex flex-col bg-white">
+      {/* Chat Header */}
+      <div className="flex items-center justify-between p-4 bg-[#4ADE80] border-b-4 border-black">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-white border-3 border-black rounded-full overflow-hidden flex items-center justify-center font-black text-2xl text-black">
+            {chatDetails?.isGroup ? '👥' : '👤'}
+          </div>
+          <div>
+            <h3 className="text-xl font-black text-black">
+              {chatDetails ? (
+                chatDetails.isGroup
+                  ? chatDetails.groupName || 'Group Chat'
+                  : chatDetails.otherUserName || 'Chat'
+              ) : (
+                'Loading...'
+              )}
+            </h3>
+            <p className="text-sm font-bold text-black opacity-80">
+              {chatDetails ? (
+                chatDetails.isGroup ? `${chatDetails.members?.length || 0} members` : 'Online'
+              ) : (
+                'Connecting...'
+              )}
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Chat input */}
-      <div className="flex items-center mt-4">
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {!Array.isArray(messages) || messages.length === 0 ? (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-6xl mb-3">💭</div>
+              <p className="text-lg font-bold text-black">No messages yet</p>
+              <p className="text-sm font-medium text-black opacity-70">Start the conversation!</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {messages.map((msg, index) => {
+              const isOwnMessage = msg.sender?._id === session?.user?.id || msg.sender === session?.user?.id;
+              return (
+                <MessageItem
+                  key={msg._id || index}
+                  message={msg.content}
+                  sender={msg.sender}
+                  timestamp={msg.timestamp || msg.createdAt}
+                  isOwnMessage={isOwnMessage}
+                />
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
+
+      {/* Chat Input */}
+      <div className="p-4 border-t-4 border-black bg-white">
         <ChatInput onSendMessage={addMessage} />
       </div>
     </div>

@@ -2,6 +2,47 @@ import { connectToDB } from "@/mongodb";
 import Chat from "@/models/Chat";
 import User from "@/models/User";
 
+export const GET = async (req) => {
+  try {
+    await connectToDB();
+    
+    const { searchParams } = new URL(req.url);
+    const userEmail = searchParams.get("userEmail");
+    
+    if (!userEmail) {
+      return new Response(
+        JSON.stringify({ error: "User email is required" }),
+        { status: 400 }
+      );
+    }
+
+    // Find user
+    const user = await User.findOne({ email: userEmail }).populate({
+      path: "chats",
+      model: "Chat",
+      populate: {
+        path: "members",
+        model: "User",
+      },
+    });
+
+    if (!user) {
+      return new Response(
+        JSON.stringify({ error: "User not found" }),
+        { status: 404 }
+      );
+    }
+
+    return new Response(JSON.stringify(user.chats || []), { status: 200 });
+  } catch (error) {
+    console.error("Failed to fetch chats:", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch chats" }),
+      { status: 500 }
+    );
+  }
+};
+
 export const POST = async (req) => {
   try {
     await connectToDB();

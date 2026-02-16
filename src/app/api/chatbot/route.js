@@ -61,22 +61,34 @@ export async function POST(request) {
     console.error("Error in chatbot API:", error);
     
     let errorMessage = "Failed to get response from chatbot";
+    let statusCode = 500;
+    
     if (error.status === 401) {
       errorMessage = "Invalid API key";
+      statusCode = 401;
     } else if (error.status === 429) {
       errorMessage = "Rate limited. Please try again later.";
+      statusCode = 429;
     } else if (error.status === 503) {
       errorMessage = "Service unavailable.";
+      statusCode = 503;
     } else if (error.message?.includes("GROQ") || error.message?.includes("API")) {
-      errorMessage = "API Error: " + error.message;
+      errorMessage = error.message;
+    } else if (error.message) {
+      errorMessage = error.message;
     }
+    
+    console.error("Returning error response:", { errorMessage, statusCode });
     
     return new Response(
       JSON.stringify({ 
         error: errorMessage,
-        details: process.env.NODE_ENV === "development" ? error.message : undefined
+        details: process.env.NODE_ENV === "development" ? error.toString() : undefined
       }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { 
+        status: statusCode, 
+        headers: { "Content-Type": "application/json" } 
+      }
     );
   }
 }
