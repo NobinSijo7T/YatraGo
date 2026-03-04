@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:hotels": "node seed-hotels.mjs",
+    "seed:activities": "node seed-activities.mjs",
+    "seed:restaurants": "node seed-restaurants.mjs",
+    "seed:stories": "node seed-travel-stories.mjs",
+    "seed:all": "node seed-hotels.mjs && node seed-activities.mjs && node seed-restaurants.mjs && node seed-travel-stories.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

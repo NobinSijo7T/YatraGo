@@ -13,15 +13,20 @@ const HomePage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/discover?q=${encodeURIComponent(searchQuery)}`);
+      // Route to discover for users, trip-advisor for places/activities
+      if (session) {
+        router.push(`/trip-advisor?query=${encodeURIComponent(searchQuery)}`);
+      } else {
+        router.push(`/discover?q=${encodeURIComponent(searchQuery)}`);
+      }
     }
   };
 
   const categories = [
-    { name: "Hotels", color: "#FF6B6B", emoji: "🏨" },
-    { name: "Things to Do", color: "#4ADE80", emoji: "🎭" },
-    { name: "Restaurants", color: "#00D9FF", emoji: "🍽️" },
-    { name: "Travel Stories", color: "#FFC700", emoji: "✈️" },
+    { name: "Hotels", color: "#FF6B6B", emoji: "🏨", link: "/trip-advisor?category=hotels" },
+    { name: "Activities", color: "#4ADE80", emoji: "🎭", link: "/trip-advisor?category=activities" },
+    { name: "Restaurants", color: "#00D9FF", emoji: "🍽️", link: "/trip-advisor?category=restaurants" },
+    { name: "Travel Stories", color: "#FFC700", emoji: "✈️", link: "/trip-advisor?category=stories" },
   ];
 
   const interests = [
@@ -70,7 +75,7 @@ const HomePage = () => {
             {categories.map((cat) => (
               <Link
                 key={cat.name}
-                href={`/discover?category=${cat.name.toLowerCase()}`}
+                href={session ? cat.link : "/register"}
                 className="px-6 py-3 bg-white border-4 border-black font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
                 style={{ backgroundColor: cat.color }}
               >

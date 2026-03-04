@@ -1,18 +1,43 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import MainNavbar from "@/ui/organisms/MainNavbar";
 import Provider from "@/context/Provider";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Loader from "@/ui/atoms/Loader";
-import Link from "next/link";
+import HotelCard from "@/ui/molecules/HotelCard";
+import ActivityCard from "@/ui/molecules/ActivityCard";
+import RestaurantCard from "@/ui/molecules/RestaurantCard";
+import TravelStoryCard from "@/ui/molecules/TravelStoryCard";
+import DetailModal from "@/ui/organisms/DetailModal";
 
 const TripAdvisorPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [destinations, setDestinations] = useState([]);
+  const searchParams = useSearchParams();
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "hotels");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "");
+  const [filters, setFilters] = useState({
+    city: searchParams.get("city") || "",
+    country: searchParams.get("country") || "",
+    priceRange: "",
+    rating: "",
+    sortBy: "rating"
+  });
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCardClick = (item) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -22,16 +47,41 @@ const TripAdvisorPage = () => {
 
   useEffect(() => {
     if (status === "authenticated") {
-      fetchDestinations();
+      fetchItems();
     }
-  }, [status, selectedCategory]);
+  }, [status, selectedCategory, filters]);
 
-  const fetchDestinations = async () => {
+  const fetchItems = async () => {
     setLoading(true);
     try {
-      const endpoint = selectedCategory === "all" 
-        ? "/api/destinations"
-        : `/api/destinations?category=${encodeURIComponent(selectedCategory)}`;
+      let endpoint = "";
+      const params = new URLSearchParams();
+      
+      // Add common params
+      if (searchQuery) params.append("query", searchQuery);
+      if (filters.city) params.append("city", filters.city);
+      if (filters.country) params.append("country", filters.country);
+      if (filters.priceRange) params.append("priceRange", filters.priceRange);
+      if (filters.rating) params.append("rating", filters.rating);
+      if (filters.sortBy) params.append("sortBy", filters.sortBy);
+      
+      // Determine endpoint based on category
+      switch (selectedCategory) {
+        case "hotels":
+          endpoint = `/api/hotels?${params.toString()}`;
+          break;
+        case "activities":
+          endpoint = `/api/activities?${params.toString()}`;
+          break;
+        case "restaurants":
+          endpoint = `/api/restaurants?${params.toString()}`;
+          break;
+        case "stories":
+          endpoint = `/api/travel-stories?${params.toString()}`;
+          break;
+        default:
+          endpoint = `/api/hotels?${params.toString()}`;
+      }
       
       const res = await fetch(endpoint, {
         cache: 'no-store',
@@ -40,17 +90,33 @@ const TripAdvisorPage = () => {
       const data = await res.json();
       
       if (res.ok) {
-        setDestinations(Array.isArray(data) ? data : []);
+        setItems(Array.isArray(data) ? data : []);
       } else {
-        console.error("Error fetching destinations:", data.error);
-        setDestinations([]);
+        console.error("Error fetching items:", data.error);
+        setItems([]);
       }
     } catch (error) {
-      console.error("Error fetching destinations:", error);
-      setDestinations([]);
+      console.error("Error fetching items:", error);
+      setItems([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchItems();
+  };
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setFilters({
+      city: "",
+      country: "",
+      priceRange: "",
+      rating: "",
+      sortBy: "rating"
+    });
   };
 
   if (status === "loading") {
@@ -58,14 +124,25 @@ const TripAdvisorPage = () => {
   }
 
   const categories = [
-    { id: "all", name: "All", emoji: "🌍" },
-    { id: "Hotels", name: "Hotels", emoji: "🏨" },
-    { id: "Things to Do", name: "Activities", emoji: "🎭" },
-    { id: "Restaurants", name: "Food", emoji: "🍽️" },
-    { id: "Travel Stories", name: "Stories", emoji: "✈️" },
+    { id: "hotels", name: "Hotels", emoji: "🏨" },
+    { id: "activities", name: "Activities", emoji: "🎭" },
+    { id: "restaurants", name: "Restaurants", emoji: "🍽️" },
+    { id: "stories", name: "Stories", emoji: "✈️" },
   ];
 
-  const colors = ["#FF6B6B", "#4ADE80", "#00D9FF", "#FFC700", "#FF69B4", "#00CED1"];
+  const priceRanges = {
+    hotels: ["Budget", "Mid-range", "Luxury", "Ultra-Luxury"],
+    activities: ["Free", "Budget", "Mid-range", "Expensive"],
+    restaurants: ["Budget", "Mid-range", "Fine Dining", "Luxury"],
+    stories: []
+  };
+
+  const sortOptions = [
+    { value: "rating", label: "Highest Rated" },
+    { value: "price-low", label: "Price: Low to High" },
+    { value: "price-high", label: "Price: High to Low" },
+    { value: "name", label: "Name (A-Z)" },
+  ];
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -77,9 +154,28 @@ const TripAdvisorPage = () => {
           <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase text-black">
             Trip Advisor
           </h1>
-          <p className="text-xl font-bold text-black">
-            Discover amazing destinations around the world
+          <p className="text-xl font-bold text-black mb-8">
+            Discover amazing destinations, activities, and experiences
           </p>
+
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="max-w-4xl">
+            <div className="flex gap-4">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search hotels, activities, restaurants..."
+                className="flex-1 px-6 py-4 text-lg font-medium border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none transition-all"
+              />
+              <button
+                type="submit"
+                className="px-8 py-4 bg-[#4ADE80] border-4 border-black font-black text-lg text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+              >
+                Search
+              </button>
+            </div>
+          </form>
         </div>
       </section>
 
@@ -105,64 +201,132 @@ const TripAdvisorPage = () => {
         </div>
       </section>
 
-      {/* Destinations Grid */}
+      {/* Filters Bar */}
+      <section className="bg-[#FAFAFA] border-b-2 border-black py-4 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-wrap gap-4 items-center">
+            <input
+              type="text"
+              value={filters.city}
+              onChange={(e) => setFilters({...filters, city: e.target.value})}
+              placeholder="City"
+              className="px-4 py-2 border-3 border-black font-medium text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none"
+            />
+            <input
+              type="text"
+              value={filters.country}
+              onChange={(e) => setFilters({...filters, country: e.target.value})}
+              placeholder="Country"
+              className="px-4 py-2 border-3 border-black font-medium text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none"
+            />
+            
+            {priceRanges[selectedCategory] && priceRanges[selectedCategory].length > 0 && (
+              <select
+                value={filters.priceRange}
+                onChange={(e) => setFilters({...filters, priceRange: e.target.value})}
+                className="px-4 py-2 border-3 border-black font-medium text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none bg-white"
+              >
+                <option value="">All Prices</option>
+                {priceRanges[selectedCategory].map(range => (
+                  <option key={range} value={range}>{range}</option>
+                ))}
+              </select>
+            )}
+            
+            <select
+              value={filters.rating}
+              onChange={(e) => setFilters({...filters, rating: e.target.value})}
+              className="px-4 py-2 border-3 border-black font-medium text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none bg-white"
+            >
+              <option value="">All Ratings</option>
+              <option value="4">4+ Stars</option>
+              <option value="3">3+ Stars</option>
+              <option value="2">2+ Stars</option>
+            </select>
+            
+            <select
+              value={filters.sortBy}
+              onChange={(e) => setFilters({...filters, sortBy: e.target.value})}
+              className="px-4 py-2 border-3 border-black font-medium text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none bg-white"
+            >
+              {sortOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 bg-[#FF6B6B] border-3 border-black font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            >
+              Clear Filters
+            </button>
+
+            <button
+              onClick={fetchItems}
+              className="px-4 py-2 bg-[#4ADE80] border-3 border-black font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Results Grid */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         {loading ? (
           <div className="flex justify-center py-20">
             <Loader />
           </div>
-        ) : destinations.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {destinations.map((dest, index) => (
-              <Link
-                key={dest._id}
-                href={`/trip-advisor/${dest._id}`}
-                className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
-              >
-                {/* Image/Icon */}
-                <div
-                  className="h-48 flex items-center justify-center text-8xl border-b-4 border-black"
-                  style={{ backgroundColor: colors[index % colors.length] }}
-                >
-                  {dest.images && dest.images[0] ? (
-                    <img src={dest.images[0]} alt={dest.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span>🌍</span>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="px-3 py-1 bg-[#FFC700] border-2 border-black font-black text-xs text-black uppercase">
-                      {dest.category}
-                    </span>
-                    {dest.expense && (
-                      <span className="px-2 py-1 bg-white border-2 border-black font-bold text-xs text-black">
-                        {dest.expense}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-2xl font-black mb-3 text-black">{dest.name}</h3>
-                  <p className="font-medium text-black mb-4 line-clamp-3">{dest.details}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-black">{dest.continent}</span>
-                    <span className="px-4 py-2 bg-black border-2 border-black font-bold text-white">
-                      View Details →
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+        ) : items.length > 0 ? (
+          <>
+            <div className="mb-6">
+              <h2 className="text-2xl font-black">
+                Found {items.length} {selectedCategory}
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {items.map((item) => {
+                switch (selectedCategory) {
+                  case "hotels":
+                    return <HotelCard key={item._id} hotel={item} onClick={() => handleCardClick(item)} />;
+                  case "activities":
+                    return <ActivityCard key={item._id} activity={item} onClick={() => handleCardClick(item)} />;
+                  case "restaurants":
+                    return <RestaurantCard key={item._id} restaurant={item} onClick={() => handleCardClick(item)} />;
+                  case "stories":
+                    return <TravelStoryCard key={item._id} story={item} onClick={() => handleCardClick(item)} />;
+                  default:
+                    return null;
+                }
+              })}
+            </div>
+          </>
         ) : (
           <div className="text-center py-20">
             <div className="text-8xl mb-6">🌍</div>
-            <h3 className="text-3xl font-black mb-4 uppercase text-black">No Destinations Found</h3>
-            <p className="text-xl font-medium text-black">Try selecting a different category</p>
+            <h3 className="text-3xl font-black mb-4 uppercase text-black">
+              No Results Found
+            </h3>
+            <p className="text-xl font-medium text-black mb-6">
+              Try adjusting your search or filters
+            </p>
+            <button
+              onClick={clearFilters}
+              className="px-6 py-3 bg-[#FFC700] border-4 border-black font-black text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            >
+              Clear All Filters
+            </button>
           </div>
         )}
       </section>
+
+      {/* Detail Modal */}
+      <DetailModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        item={selectedItem}
+        type={selectedCategory}
+      />
     </div>
   );
 };
@@ -170,7 +334,9 @@ const TripAdvisorPage = () => {
 export default function TripAdvisor() {
   return (
     <Provider>
-      <TripAdvisorPage />
+      <Suspense fallback={<Loader />}>
+        <TripAdvisorPage />
+      </Suspense>
     </Provider>
   );
 }
