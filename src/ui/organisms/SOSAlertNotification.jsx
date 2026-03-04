@@ -106,7 +106,7 @@ const SOSAlertNotification = () => {
       {alerts.map((alert) => (
         <div
           key={alert.id}
-          className="bg-red-600 text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 animate-bounce"
+          className="bg-red-600 text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4"
         >
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -139,13 +139,15 @@ const SOSAlertNotification = () => {
 
             <div className="flex gap-2">
               <a
-                href={`mailto:${alert.userEmail}`}
+                href={`https://mail.google.com/mail/?view=cm&fs=1&to=${alert.userEmail}&su=Emergency%20Response%20-%20SOS%20Alert&body=Hi%20${alert.userName},%0D%0A%0D%0AI%20saw%20your%20SOS%20alert.%20How%20can%20I%20help%3F`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex-1 px-4 py-2 bg-white text-red-600 font-bold text-center border-2 border-black hover:bg-gray-100 transition-colors"
               >
                 📧 Email
               </a>
               <a
-                href={`/chats/new?email=${alert.userEmail}`}
+                href={`/chats/new?userId=${alert.userId}`}
                 className="flex-1 px-4 py-2 bg-white text-red-600 font-bold text-center border-2 border-black hover:bg-gray-100 transition-colors"
               >
                 💬 Chat

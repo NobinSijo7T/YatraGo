@@ -1,19 +1,20 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import io from "socket.io-client";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import MessageItem from "../molecules/MessageItem";
 import ChatInput from "../molecules/ChatInput";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation"; // To get chatId from the URL
-
-let socket;
+import { useSocket } from "@/context/SocketContext";
 
 const MessagePanel = () => {
   const [messages, setMessages] = useState([]);
   const [chatDetails, setChatDetails] = useState(null); // State to store chat details (name, profile pic, etc.)
   const { data: session } = useSession(); // To get the logged-in user's info
   const { chatId } = useParams(); // Assume you're using dynamic routing with chatId in the URL
+  const { socket, isConnected } = useSocket(); // Use shared socket from context
   const messagesEndRef = useRef(null);
+  const hasJoinedRoom = useRef(false);
+  const currentChatId = useRef(null);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -30,50 +31,131 @@ const MessagePanel = () => {
     return id && typeof id === 'string' && /^[0-9a-fA-F]{24}$/.test(id);
   };
 
+  // Stable handler for receiving messages - doesn't depend on messages state
+  const handleReceiveMessage = useCallback((newMessage) => {
+    console.log("📨 Received message via socket:", newMessage);
+    setMessages((prevMessages) => {
+      // Check if message already exists to avoid duplicates
+      const exists = prevMessages.some(msg => 
+        msg._id === newMessage._id || 
+        (msg.content === newMessage.content && msg.sender?._id === newMessage.sender?._id && 
+         Math.abs(new Date(msg.timestamp) - new Date(newMessage.timestamp)) < 1000)
+      );
+      if (exists) {
+        console.log("⚠️ Duplicate message, skipping");
+        return prevMessages;
+      }
+      console.log("✅ Adding new message to UI");
+      return [...prevMessages, newMessage];
+    });
+  }, []);
+
+  // Join chat room when socket is ready
   useEffect(() => {
-    // Skip socket and data fetching for invalid chatIds (like "new")
-    if (!isValidChatId(chatId)) {
-      console.log("Invalid or new chat ID, skipping data fetch");
+    if (!isValidChatId(chatId) || !socket || !isConnected) {
+      console.log("⏭️ Skipping chat setup - chatId:", chatId, "socket:", !!socket, "isConnected:", isConnected);
+      hasJoinedRoom.current = false;
+      currentChatId.current = null;
       return;
     }
 
-    // Call the API route to initialize the Socket.IO server
-    fetch("/api/socket");
-
-    // Connect to the Socket.IO server
-    socket = io();
-
-    // Check if socket is initialized
-    if (!socket) {
-      console.error("Socket.IO client failed to initialize");
-      return;
-    }
+    console.log("💬 MessagePanel: Setting up chat", chatId);
+    currentChatId.current = chatId;
 
     // Join the specific chat room
-    socket.emit("joinChat", chatId);
-    console.log("Joined chat:", chatId); // Debugging
-
-    // Fetch previous messages from the database when the component loads
-    getMessages();
-
-    // Fetch chat details (name, profile picture, etc.)
-    fetchChatDetails();
-
-    // Listen for incoming messages from the server
-
-    // Clean up on component unmount
-    return () => {
-      if (socket) {
-        socket.emit("leaveChat", chatId);
-        socket.disconnect();
-        console.log("Left chat:", chatId); // Debugging
+    const joinRoom = () => {
+      if (socket && isConnected) {
+        console.log("🚪 Emitting joinChat for:", chatId);
+        socket.emit("joinChat", chatId);
+        
+        // Listen for join confirmation
+        const handleJoinConfirmation = (data) => {
+          if (data.chatId === chatId) {
+            console.log("✅ Successfully joined chat room:", chatId);
+            hasJoinedRoom.current = true;
+          }
+        };
+        
+        socket.once("joinedChat", handleJoinConfirmation);
+        
+        // Set timeout in case confirmation doesn't arrive
+        setTimeout(() => {
+          if (!hasJoinedRoom.current) {
+            console.log("⏰ Join confirmation timeout, assuming success");
+            hasJoinedRoom.current = true;
+          }
+        }, 1000);
       }
     };
-  }, [chatId]);
+
+    joinRoom();
+
+    // Fetch previous messages and chat details
+    getMessages();
+    fetchChatDetails();
+
+    // Clean up on component unmount or chatId change
+    return () => {
+      if (socket && hasJoinedRoom.current && currentChatId.current) {
+        console.log("🚪 Leaving chat room:", currentChatId.current);
+        socket.emit("leaveChat", currentChatId.current);
+        hasJoinedRoom.current = false;
+      }
+    };
+  }, [chatId, socket, isConnected]);
+
+  // Set up socket listener separately (only once)
+  useEffect(() => {
+    if (!socket) return;
+
+    console.log("👂 Setting up receiveMessage listener");
+    
+    // Message handler
+    socket.on("receiveMessage", handleReceiveMessage);
+
+    // Handle reconnection - rejoin current chat
+    const handleReconnect = () => {
+      console.log("🔄 Socket reconnected, rejoining chat");
+      if (currentChatId.current && isValidChatId(currentChatId.current)) {
+        hasJoinedRoom.current = false; // Reset flag
+        console.log("🚪 Rejoining chat:", currentChatId.current);
+        socket.emit("joinChat", currentChatId.current);
+        
+        const handleRejoinConfirmation = (data) => {
+          if (data.chatId === currentChatId.current) {
+            console.log("✅ Successfully rejoined chat room:", currentChatId.current);
+            hasJoinedRoom.current = true;
+          }
+        };
+        
+        socket.once("joinedChat", handleRejoinConfirmation);
+      }
+    };
+
+    socket.on("connect", handleReconnect);
+
+    return () => {
+      console.log("🧹 Removing socket listeners");
+      socket.off("receiveMessage", handleReceiveMessage);
+      socket.off("connect", handleReconnect);
+    };
+  }, [socket, handleReceiveMessage]);
 
   // Function to handle sending a new message
   const addMessage = async (newMessage) => {
     if (newMessage.trim()) {
+      // Check if we're in a valid chat and socket is ready
+      if (!isValidChatId(chatId)) {
+        console.error("❌ Cannot send message - invalid chatId");
+        return;
+      }
+
+      if (!socket || !isConnected) {
+        console.error("❌ Cannot send message - socket not connected");
+        alert("Connection lost. Please refresh the page.");
+        return;
+      }
+
       const tempId = Date.now().toString();
       const messageData = {
         content: newMessage,
@@ -94,15 +176,18 @@ const MessagePanel = () => {
       };
       setMessages((prevMessages) => [...prevMessages, optimisticMessage]);
 
-      console.log("Sending message:", messageData); // Debugging
+      console.log("📤 Sending message:", messageData);
+      console.log("🔍 Socket state - connected:", isConnected, "hasJoinedRoom:", hasJoinedRoom.current);
 
-      // Check if socket is initialized before emitting
-      if (socket) {
-        console.log("Emitting message via Socket.IO");
+      // Emit via socket if connected
+      if (socket && isConnected) {
+        console.log("📡 Emitting sendMessage via Socket.IO to room:", chatId);
         socket.emit("sendMessage", messageData);
+      } else {
+        console.warn("⚠️ Socket not connected, message will only be saved to DB");
       }
 
-      // Send message to the server
+      // Send message to the server (backup and for persistence)
       try {
         const response = await fetch("/api/messages", {
           method: "POST",
@@ -118,18 +203,19 @@ const MessagePanel = () => {
 
         const savedMessage = await response.json();
 
-        console.log("Message saved:", savedMessage); // Debugging
+        console.log("💾 Message saved to database:", savedMessage);
 
         // Replace optimistic message with saved message from server
         setMessages((prevMessages) => 
           prevMessages.map(msg => msg._id === tempId ? savedMessage : msg)
         );
       } catch (error) {
-        console.error("Error sending message:", error);
+        console.error("❌ Error sending message:", error);
         // Remove optimistic message on error
         setMessages((prevMessages) => 
           prevMessages.filter(msg => msg._id !== tempId)
         );
+        alert("Failed to send message. Please try again.");
       }
     }
   };

@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { connectToDB } from "@/mongodb";
 
 let io;
 
@@ -142,6 +143,56 @@ export default function handler(req, res) {
                     userName,
                     timestamp: new Date(),
                 });
+            });
+
+            // Chat functionality - Join chat room
+            socket.on("joinChat", (chatId) => {
+                socket.join(chatId);
+                console.log(`💬 User ${socket.id} joined chat: ${chatId}`);
+                // Confirm join to the client
+                socket.emit("joinedChat", { chatId, success: true });
+            });
+
+            // Chat functionality - Leave chat room
+            socket.on("leaveChat", (chatId) => {
+                socket.leave(chatId);
+                console.log(`👋 User ${socket.id} left chat: ${chatId}`);
+            });
+
+            // Chat functionality - Send message
+            socket.on("sendMessage", async (messageData) => {
+                console.log(`📨 Sending message in chat ${messageData.chatId} from ${messageData.sender}`);
+
+                try {
+                    // Connect to MongoDB
+                    await connectToDB();
+                    
+                    // Import User model dynamically
+                    const { default: User } = await import("@/models/User");
+                    
+                    // Fetch the sender details
+                    const sender = await User.findById(messageData.sender).select("name email profilePic");
+                    
+                    if (!sender) {
+                        console.warn("⚠️ Sender not found in database:", messageData.sender);
+                    }
+                    
+                    // Broadcast message to all users in the chat room with populated sender
+                    const messageWithSender = {
+                        ...messageData,
+                        sender: sender || { _id: messageData.sender, name: "Unknown", email: "unknown@example.com" },
+                    };
+                    
+                    console.log(`📤 Broadcasting to room ${messageData.chatId}`);
+                    const socketsInRoom = await io.in(messageData.chatId).fetchSockets();
+                    console.log(`👥 Sockets in room ${messageData.chatId}: ${socketsInRoom.length}`, socketsInRoom.map(s => s.id));
+                    
+                    io.to(messageData.chatId).emit("receiveMessage", messageWithSender);
+                    console.log(`✅ Message broadcast complete for chat ${messageData.chatId}`);
+                } catch (error) {
+                    console.error("❌ Error broadcasting message:", error);
+                    console.error("❌ Error details:", error.message, error.stack);
+                }
             });
 
             // Disconnect

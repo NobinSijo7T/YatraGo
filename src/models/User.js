@@ -30,12 +30,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  chats: [
-    {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Chat" }],
-      default: [],
-    },
-  ],
+  chats: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Chat"
+  }],
 });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);

@@ -16,6 +16,8 @@ const ChatList = () => {
         const res = await fetch(`/api/chats?userEmail=${encodeURIComponent(session.user.email)}`);
         if (res.ok) {
           const data = await res.json();
+          console.log("📋 Fetched chats:", data);
+          console.log("👤 Current user session:", session?.user);
           setChats(Array.isArray(data) ? data : []);
         }
       } catch (error) {

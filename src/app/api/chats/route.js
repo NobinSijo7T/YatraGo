@@ -72,7 +72,10 @@ export const POST = async (req) => {
     }
 
     // Check if a chat with the same members or group name already exists
-    const existingChat = await Chat.findOne(queryExistingChat);
+    const existingChat = await Chat.findOne(queryExistingChat).populate({
+      path: "members",
+      model: "User",
+    });
 
     if (existingChat) {
       return new Response(
@@ -93,6 +96,12 @@ export const POST = async (req) => {
     });
 
     await newChat.save();
+
+    // Populate members before returning
+    await newChat.populate({
+      path: "members",
+      model: "User",
+    });
 
     // Add the chat to each user's chat list
     const query = { _id: { $in: members } };
