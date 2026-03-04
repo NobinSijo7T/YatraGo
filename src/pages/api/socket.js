@@ -117,6 +117,33 @@ export default function handler(req, res) {
                 });
             });
 
+            // SOS Alert - Broadcast to ALL connected clients
+            socket.on("trigger-sos", ({ userId, userName, userEmail, userLocation, message, alertId }) => {
+                console.log(`🚨 SOS ALERT from ${userName} (${userEmail})`);
+
+                // Broadcast to ALL connected clients
+                io.emit("sos-alert", {
+                    alertId,
+                    userId,
+                    userName,
+                    userEmail,
+                    userLocation,
+                    message: message || "I need help!",
+                    timestamp: new Date(),
+                });
+            });
+
+            // SOS Resolved - Notify all clients
+            socket.on("resolve-sos", ({ alertId, userName }) => {
+                console.log(`✅ SOS RESOLVED by ${userName}`);
+
+                io.emit("sos-resolved", {
+                    alertId,
+                    userName,
+                    timestamp: new Date(),
+                });
+            });
+
             // Disconnect
             socket.on("disconnect", () => {
                 console.log("❌ Client disconnected:", socket.id);

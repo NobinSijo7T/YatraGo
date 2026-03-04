@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import MainNavbar from "@/ui/organisms/MainNavbar";
 import Provider from "@/context/Provider";
 import { useSession } from "next-auth/react";
@@ -162,7 +162,7 @@ const DiscoverPage = () => {
                   {/* Content */}
                   <div className="p-6">
                     {user.bio && (
-                      <p className="font-medium mb-4">"{user.bio}"</p>
+                      <p className="font-medium mb-4">&ldquo;{user.bio}&rdquo;</p>
                     )}
 
                     {/* Travel Info */}
@@ -223,7 +223,9 @@ const DiscoverPage = () => {
 export default function Discover() {
   return (
     <Provider>
-      <DiscoverPage />
+      <Suspense fallback={<Loader />}>
+        <DiscoverPage />
+      </Suspense>
     </Provider>
   );
 }

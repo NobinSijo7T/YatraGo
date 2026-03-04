@@ -95,7 +95,7 @@ const HomePage = () => {
             {/* Content Side */}
             <div className="p-8 md:p-12 flex flex-col justify-center">
               <h2 className="text-4xl md:text-5xl font-black mb-4 uppercase">
-                Find Companions for Everything You're Into
+                Find Companions for Everything You&apos;re Into
               </h2>
               <p className="text-xl font-medium mb-6">
                 Browse 400,000+ travelers and connect with people going to the same places as you.
@@ -112,7 +112,7 @@ const HomePage = () => {
 
         {/* Interest Cards */}
         <h2 className="text-4xl font-black mb-8 uppercase">Find companions by interest</h2>
-        <p className="text-xl mb-8 font-medium">Whatever you're into, we've got it</p>
+        <p className="text-xl mb-8 font-medium">Whatever you&apos;re into, we&apos;ve got it</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {interests.map((interest) => (

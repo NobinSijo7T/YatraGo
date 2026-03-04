@@ -72,7 +72,7 @@ const DestinationDetailPage = () => {
           <div className="text-9xl mb-6">🚫</div>
           <h1 className="text-5xl font-black mb-4 uppercase text-black">Destination Not Found</h1>
           <p className="text-xl font-medium text-black mb-8">
-            The destination you're looking for doesn't exist or has been removed.
+            The destination you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Link
             href="/trip-advisor"

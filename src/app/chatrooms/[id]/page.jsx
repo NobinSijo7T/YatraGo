@@ -512,7 +512,7 @@ const ChatRoomPage = () => {
                 <div className="bg-white border-8 border-black p-12 max-w-md text-center shadow-[20px_20px_0px_0px_rgba(0,0,0,1)]">
                     <div className="text-9xl mb-6">🔍</div>
                     <h3 className="text-3xl font-black uppercase mb-4 text-black">Chat Room Not Found</h3>
-                    <p className="font-bold text-gray-600 mb-8">This chat room doesn't exist or has been deleted.</p>
+                    <p className="font-bold text-gray-600 mb-8">This chat room doesn&apos;t exist or has been deleted.</p>
                     <button
                         onClick={() => router.push("/chatrooms")}
                         className="px-8 py-4 bg-[#FFC700] border-4 border-black font-black text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
@@ -710,7 +710,7 @@ const MessageBubble = ({ message, isOwn, onVote, colors, index }) => {
                 <div className="flex items-start gap-3">
                     <span className="text-3xl">💡</span>
                     <div className="flex-1">
-                        <p className="font-black text-sm mb-1 text-black">{message.senderName}'s Travel Tip</p>
+                        <p className="font-black text-sm mb-1 text-black">{message.senderName}&apos;s Travel Tip</p>
                         <p className="font-medium text-black">{message.content}</p>
                     </div>
                 </div>

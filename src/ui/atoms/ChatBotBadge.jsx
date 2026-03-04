@@ -122,7 +122,7 @@ const ChatBotBadge = () => {
                   Ask about destinations, activities, and travel tips!
                 </p>
                 <div className="mt-4 p-3 border-2 border-black bg-white">
-                  <p className="text-xs text-black"><strong>Example:</strong><br/>"Best places in Paris?"</p>
+                  <p className="text-xs text-black"><strong>Example:</strong><br/>&ldquo;Best places in Paris?&rdquo;</p>
                 </div>
               </div>
             ) : (

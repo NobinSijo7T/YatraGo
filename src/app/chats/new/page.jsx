@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Loader from "@/ui/atoms/Loader";
@@ -79,7 +79,9 @@ const NewChatPage = () => {
 export default function NewChat() {
   return (
     <Provider>
-      <NewChatPage />
+      <Suspense fallback={<Loader />}>
+        <NewChatPage />
+      </Suspense>
     </Provider>
   );
 }
