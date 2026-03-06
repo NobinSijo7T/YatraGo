@@ -54,7 +54,7 @@ const TravelStoryCard = ({ story, onClick }) => {
           {/* Author Info */}
           {story.author && (
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 bg-[#00D9FF] border-2 border-black rounded-full flex items-center justify-center font-black text-sm">
+              <div className="w-8 h-8 bg-[#00D9FF] border-2 border-black rounded-full flex items-center justify-center font-black text-sm text-black">
                 {story.author.avatar ? (
                   <img 
                     src={story.author.avatar} 
@@ -66,7 +66,7 @@ const TravelStoryCard = ({ story, onClick }) => {
                 )}
               </div>
               <div>
-                <div className="font-bold text-sm">{story.author.name || 'Anonymous'}</div>
+                <div className="font-bold text-sm text-black">{story.author.name || 'Anonymous'}</div>
                 <div className="font-medium text-xs text-black">
                   {story.createdAt && formatDate(story.createdAt)}
                 </div>
@@ -74,13 +74,13 @@ const TravelStoryCard = ({ story, onClick }) => {
             </div>
           )}
 
-          <h3 className="text-xl font-black mb-2 line-clamp-2 group-hover:text-[#FFC700] transition-colors">
+          <h3 className="text-xl font-black mb-2 line-clamp-2 text-black group-hover:text-[#FFC700] transition-colors">
             {story.title}
           </h3>
 
           {/* Destinations */}
           {story.countries && story.countries.length > 0 && (
-            <div className="flex items-center gap-2 mb-3 text-sm font-bold">
+            <div className="flex items-center gap-2 mb-3 text-sm font-bold text-black">
               <span>📍</span>
               <span className="line-clamp-1">
                 {story.countries.slice(0, 2).join(', ')}
@@ -114,7 +114,7 @@ const TravelStoryCard = ({ story, onClick }) => {
           )}
 
           {/* Stats */}
-          <div className="pt-3 border-t-2 border-black flex items-center justify-between text-sm font-bold">
+          <div className="pt-3 border-t-2 border-black flex items-center justify-between text-sm font-bold text-black">
             <div className="flex gap-3">
               {story.likes !== undefined && story.likes > 0 && (
                 <span className="flex items-center gap-1">

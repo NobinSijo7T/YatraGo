@@ -59,11 +59,11 @@ const ActivityCard = ({ activity, onClick }) => {
 
         {/* Content */}
         <div className="p-4">
-          <h3 className="text-xl font-black mb-2 line-clamp-2 group-hover:text-[#4ADE80] transition-colors">
+          <h3 className="text-xl font-black mb-2 line-clamp-2 text-black group-hover:text-[#4ADE80] transition-colors">
             {activity.name}
           </h3>
 
-          <div className="flex items-center gap-2 mb-2 text-sm font-bold">
+          <div className="flex items-center gap-2 mb-2 text-sm font-bold text-black">
             <span>📍</span>
             <span className="line-clamp-1">{activity.city}, {activity.country}</span>
           </div>
@@ -103,7 +103,7 @@ const ActivityCard = ({ activity, onClick }) => {
           {/* Price and Reviews */}
           <div className="pt-3 border-t-2 border-black flex items-center justify-between">
             {activity.price && activity.price.amount > 0 ? (
-              <span className="text-lg font-black">
+              <span className="text-lg font-black text-black">
                 {activity.price.currency} {activity.price.amount}
               </span>
             ) : (

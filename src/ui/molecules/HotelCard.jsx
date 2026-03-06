@@ -41,11 +41,11 @@ const HotelCard = ({ hotel, onClick }) => {
 
         {/* Content */}
         <div className="p-4">
-          <h3 className="text-xl font-black mb-2 line-clamp-2 group-hover:text-[#00D9FF] transition-colors">
+          <h3 className="text-xl font-black mb-2 line-clamp-2 text-black group-hover:text-[#00D9FF] transition-colors">
             {hotel.name}
           </h3>
 
-          <div className="flex items-center gap-2 mb-2 text-sm font-bold">
+          <div className="flex items-center gap-2 mb-2 text-sm font-bold text-black">
             <span>📍</span>
             <span className="line-clamp-1">{hotel.city}, {hotel.country}</span>
           </div>
@@ -84,7 +84,7 @@ const HotelCard = ({ hotel, onClick }) => {
           {/* Price Range */}
           {hotel.pricePerNight && hotel.pricePerNight.min > 0 && (
             <div className="pt-3 border-t-2 border-black">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between text-black">
                 <span className="text-sm font-bold">From</span>
                 <span className="text-xl font-black">
                   {hotel.pricePerNight.currency} {hotel.pricePerNight.min}
@@ -93,6 +93,8 @@ const HotelCard = ({ hotel, onClick }) => {
               </div>
             </div>
           )}
+
+
 
           {/* Reviews */}
           {hotel.reviewCount > 0 && (

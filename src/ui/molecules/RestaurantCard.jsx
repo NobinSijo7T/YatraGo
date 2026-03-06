@@ -41,11 +41,11 @@ const RestaurantCard = ({ restaurant, onClick }) => {
 
         {/* Content */}
         <div className="p-4">
-          <h3 className="text-xl font-black mb-2 line-clamp-2 group-hover:text-[#FF6B6B] transition-colors">
+          <h3 className="text-xl font-black mb-2 line-clamp-2 text-black group-hover:text-[#FF6B6B] transition-colors">
             {restaurant.name}
           </h3>
 
-          <div className="flex items-center gap-2 mb-2 text-sm font-bold">
+          <div className="flex items-center gap-2 mb-2 text-sm font-bold text-black">
             <span>📍</span>
             <span className="line-clamp-1">{restaurant.city}, {restaurant.country}</span>
           </div>
@@ -91,17 +91,17 @@ const RestaurantCard = ({ restaurant, onClick }) => {
           <div className="pt-3 border-t-2 border-black">
             <div className="flex items-center justify-between mb-2">
               {restaurant.averageCost && restaurant.averageCost.amount > 0 ? (
-                <span className="text-lg font-black">
+                <span className="text-lg font-black text-black">
                   {restaurant.averageCost.currency} {restaurant.averageCost.amount}
                   {restaurant.averageCost.perPerson && <span className="text-sm">/person</span>}
                 </span>
               ) : (
-                <span className="text-sm font-bold">{restaurant.priceRange}</span>
+                <span className="text-sm font-bold text-black">{restaurant.priceRange}</span>
               )}
             </div>
 
             {restaurant.restaurantType && (
-              <span className="inline-block px-2 py-1 bg-gray-100 border-2 border-black text-xs font-bold">
+              <span className="inline-block px-2 py-1 bg-gray-100 border-2 border-black text-xs font-bold text-black">
                 {restaurant.restaurantType}
               </span>
             )}
