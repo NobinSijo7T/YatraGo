@@ -5,6 +5,42 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import MainNavbar from "@/ui/organisms/MainNavbar";
 
+/* ─────────────────────────────────────────────────────────────
+   Static data
+───────────────────────────────────────────────────────────── */
+const categories = [
+  { name: "Hotels",         icon: "🏨", link: "/trip-advisor?category=hotels",     color: "bg-blue-50   text-blue-700   border-blue-100" },
+  { name: "Activities",     icon: "🎭", link: "/trip-advisor?category=activities", color: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+  { name: "Restaurants",    icon: "🍽️", link: "/trip-advisor?category=restaurants",color: "bg-orange-50  text-orange-700  border-orange-100" },
+  { name: "Travel Stories", icon: "✈️", link: "/trip-advisor?category=stories",    color: "bg-purple-50  text-purple-700  border-purple-100" },
+];
+
+const destinations = [
+  { name: "Bali",      country: "Indonesia",  img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80", tagline: "Island paradise" },
+  { name: "Paris",     country: "France",     img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80", tagline: "City of light" },
+  { name: "Kyoto",     country: "Japan",      img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80", tagline: "Ancient culture" },
+  { name: "Santorini", country: "Greece",     img: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=80", tagline: "Aegean escape" },
+  { name: "New York",  country: "USA",        img: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80", tagline: "City that never sleeps" },
+  { name: "Cape Town", country: "South Africa", img: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600&q=80", tagline: "Where mountains meet sea" },
+];
+
+const interests = [
+  { name: "Adventure", emoji: "🏔️", desc: "Trekking, rafting & more",   bg: "from-emerald-400 to-teal-500" },
+  { name: "Food",      emoji: "🍜", desc: "Local cuisine & street food", bg: "from-orange-400  to-red-500"   },
+  { name: "Culture",   emoji: "🎨", desc: "Art, history & heritage",     bg: "from-purple-400  to-indigo-500"},
+  { name: "Beach",     emoji: "🌊", desc: "Sun, sand & sea",             bg: "from-sky-400     to-blue-500"  },
+];
+
+const stats = [
+  { value: "400K+",  label: "Travelers" },
+  { value: "180+",   label: "Countries" },
+  { value: "50K+",   label: "Stories"   },
+  { value: "24/7",   label: "Support"   },
+];
+
+/* ─────────────────────────────────────────────────────────────
+   Component
+───────────────────────────────────────────────────────────── */
 const HomePage = () => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -13,7 +49,6 @@ const HomePage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Route to discover for users, trip-advisor for places/activities
       if (session) {
         router.push(`/trip-advisor?query=${encodeURIComponent(searchQuery)}`);
       } else {
@@ -22,146 +57,242 @@ const HomePage = () => {
     }
   };
 
-  const categories = [
-    { name: "Hotels", color: "#FF6B6B", emoji: "🏨", link: "/trip-advisor?category=hotels" },
-    { name: "Activities", color: "#4ADE80", emoji: "🎭", link: "/trip-advisor?category=activities" },
-    { name: "Restaurants", color: "#00D9FF", emoji: "🍽️", link: "/trip-advisor?category=restaurants" },
-    { name: "Travel Stories", color: "#FFC700", emoji: "✈️", link: "/trip-advisor?category=stories" },
-  ];
-
-  const interests = [
-    { name: "Outdoors", color: "#FF6B6B", image: "🏔️" },
-    { name: "Food", color: "#FFC700", image: "🍜" },
-    { name: "Culture", color: "#FF69B4", image: "🎨" },
-    { name: "Water", color: "#00D9FF", image: "🌊" },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-white text-gray-900">
       <MainNavbar />
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#4ADE80] via-[#00D9FF] to-[#FFC700] py-20 px-4 border-b-4 border-black">
-        {/* Decorative shapes */}
-        <div className="absolute top-10 right-10 w-16 h-16 bg-[#FF6B6B] border-4 border-black rotate-45 hidden lg:block"></div>
-        <div className="absolute bottom-10 left-10 w-20 h-20 bg-white border-4 border-black rounded-full hidden lg:block"></div>
+      {/* ── HERO ─────────────────────────────────────────────── */}
+      <section className="relative min-h-[88vh] -mt-28 flex flex-col items-center justify-center text-center overflow-hidden">
+        {/* Background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600&q=85')",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
 
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 className="text-6xl md:text-8xl font-black mb-6 text-black uppercase tracking-tight">
-            Where to?
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4">
+          <p className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-4">
+            Your travel companion
+          </p>
+          <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight mb-4 drop-shadow-lg">
+            Where will you go
+            <span className="block text-[#009fe3]">next?</span>
           </h1>
+          <p className="text-white/85 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
+            Discover amazing destinations, find travel buddies, and create memories that last a lifetime.
+          </p>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mt-8">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Places to go, things to do, hotels..."
-                className="flex-1 px-6 py-4 text-lg font-medium border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:translate-x-[-2px] focus:translate-y-[-2px] transition-all"
-              />
+          {/* Search Box */}
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-2xl p-2 flex flex-col sm:flex-row gap-2">
+              <div className="flex-1 flex items-center gap-3 px-4">
+                <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cities, hotels, activities, travel stories..."
+                  className="flex-1 py-3 text-gray-900 text-base placeholder-gray-400 focus:outline-none"
+                />
+              </div>
               <button
                 type="submit"
-                className="px-8 py-4 bg-[#4ADE80] border-4 border-black font-black text-lg text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] transition-all"
+                className="px-8 py-3.5 bg-[#003580] text-white font-semibold rounded-xl hover:bg-[#00266b] transition-colors text-base flex-shrink-0"
               >
                 Search
               </button>
             </div>
           </form>
 
-          {/* Quick Category Links */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
+          {/* Quick category chips */}
+          <div className="flex flex-wrap justify-center gap-2.5 mt-6">
             {categories.map((cat) => (
               <Link
                 key={cat.name}
                 href={session ? cat.link : "/register"}
-                className="px-6 py-3 bg-white border-4 border-black font-bold text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
-                style={{ backgroundColor: cat.color }}
+                className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm border border-white/30 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition-colors"
               >
-                <span className="mr-2">{cat.emoji}</span>
+                <span>{cat.icon}</span>
                 {cat.name}
               </Link>
             ))}
           </div>
         </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </section>
 
-      {/* Featured Section */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        {/* Hero Card */}
-        <div className="bg-[#4ADE80] border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] mb-16">
-          <div className="grid md:grid-cols-2">
-            {/* Image Side */}
-            <div className="relative h-64 md:h-auto bg-gradient-to-br from-[#00D9FF] to-[#0099FF] border-r-0 md:border-r-4 border-black flex items-center justify-center">
-              <div className="text-9xl">🌏</div>
+      {/* ── STATS BAR ────────────────────────────────────────── */}
+      <section className="bg-[#003580] text-white py-10">
+        <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {stats.map((s) => (
+            <div key={s.label}>
+              <p className="text-3xl font-bold">{s.value}</p>
+              <p className="text-white/70 text-sm mt-1">{s.label}</p>
             </div>
+          ))}
+        </div>
+      </section>
 
-            {/* Content Side */}
-            <div className="p-8 md:p-12 flex flex-col justify-center">
-              <h2 className="text-4xl md:text-5xl font-black mb-4 uppercase">
-                Find Companions for Everything You&apos;re Into
-              </h2>
-              <p className="text-xl font-medium mb-6">
-                Browse 400,000+ travelers and connect with people going to the same places as you.
-              </p>
-              <Link
-                href={session ? "/discover" : "/register"}
-                className="inline-block px-8 py-4 bg-black text-white hover:text-white border-4 border-black font-black text-lg shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all w-fit"
-              >
-                {session ? "Discover Now" : "Join Now"}
-              </Link>
-            </div>
+      {/* ── POPULAR DESTINATIONS ─────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 py-20">
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <p className="text-[#009fe3] text-sm font-semibold uppercase tracking-wide mb-1">Explore</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Popular Destinations</h2>
           </div>
+          <Link
+            href={session ? "/discover" : "/register"}
+            className="text-sm font-semibold text-[#003580] hover:underline hidden sm:block"
+          >
+            View all →
+          </Link>
         </div>
 
-        {/* Interest Cards */}
-        <h2 className="text-4xl font-black mb-8 uppercase">Find companions by interest</h2>
-        <p className="text-xl mb-8 font-medium">Whatever you&apos;re into, we&apos;ve got it</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {interests.map((interest) => (
+        {/* Grid: 1 large + 5 small */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {destinations.map((dest, i) => (
             <Link
-              key={interest.name}
-              href={`/discover?interest=${interest.name.toLowerCase()}`}
-              className="relative h-64 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all overflow-hidden group"
-              style={{ backgroundColor: interest.color }}
+              key={dest.name}
+              href={session ? `/discover?q=${dest.name}` : "/register"}
+              className={`group relative overflow-hidden rounded-2xl ${
+                i === 0 ? "col-span-2 md:col-span-1 md:row-span-2" : ""
+              }`}
             >
-              <div className="absolute inset-0 flex items-center justify-center text-9xl opacity-30 group-hover:scale-110 transition-transform">
-                {interest.image}
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-white border-t-4 border-black text-black">
-                <h3 className="text-2xl font-black uppercase">{interest.name}</h3>
+              <div className={`relative overflow-hidden ${i === 0 ? "h-72 md:h-full min-h-[340px]" : "h-44"}`}>
+                <img
+                  src={dest.img}
+                  alt={dest.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <p className="font-bold text-lg leading-tight">{dest.name}</p>
+                  <p className="text-white/75 text-sm">{dest.country}</p>
+                  <p className="text-white/60 text-xs mt-0.5 italic">{dest.tagline}</p>
+                </div>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* CTA Section */}
-      {!session && (
-        <section className="bg-[#FFC700] border-y-4 border-black py-16 px-4 text-black">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-5xl font-black mb-6 uppercase text-black">
-              Ready to Find Your Travel Buddy?
-            </h2>
-            <p className="text-xl font-medium mb-8 text-black">
-              Join thousands of travelers connecting worldwide
+      {/* ── INTERESTS ────────────────────────────────────────── */}
+      <section className="bg-gray-50 py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <p className="text-[#009fe3] text-sm font-semibold uppercase tracking-wide mb-1">Find your tribe</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Travel by interest</h2>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+              Whatever you&apos;re passionate about, find companions who share your vibe.
             </p>
-            <Link
-              href="/register"
-              className="inline-block px-12 py-5 bg-black text-white hover:text-white border-4 border-black font-black text-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
-            >
-              Get Started Free →
-            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            {interests.map((interest) => (
+              <Link
+                key={interest.name}
+                href={`/discover?interest=${interest.name.toLowerCase()}`}
+                className={`group relative h-52 rounded-2xl bg-gradient-to-br ${interest.bg} overflow-hidden hover:shadow-lg transition-shadow`}
+              >
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 text-center">
+                  <span className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                    {interest.emoji}
+                  </span>
+                  <h3 className="text-xl font-bold">{interest.name}</h3>
+                  <p className="text-white/80 text-sm mt-1">{interest.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ─────────────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-4 py-20">
+        <div className="text-center mb-14">
+          <p className="text-[#009fe3] text-sm font-semibold uppercase tracking-wide mb-1">Simple &amp; easy</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">How YathraGo works</h2>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-10">
+          {[
+            { step: "01", title: "Create your profile",  desc: "Tell us about yourself — where you travel, your style and what you love.",       icon: "👤" },
+            { step: "02", title: "Find companions",       desc: "Browse thousands of travelers heading to the same destinations as you.",          icon: "🤝" },
+            { step: "03", title: "Travel together",       desc: "Chat, plan and share your journey. Make friends that last a lifetime.",           icon: "🌍" },
+          ].map((item) => (
+            <div key={item.step} className="text-center">
+              <div className="w-16 h-16 bg-[#003580]/5 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                {item.icon}
+              </div>
+              <span className="text-xs font-bold text-[#009fe3] tracking-wider uppercase">{item.step}</span>
+              <h3 className="text-lg font-bold text-gray-900 mt-1 mb-2">{item.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ───────────────────────────────────────── */}
+      {!session && (
+        <section className="relative overflow-hidden bg-[#003580] py-20 px-4">
+          <div
+            className="absolute inset-0 opacity-10 bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=1200&q=70')" }}
+          />
+          <div className="relative z-10 max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Ready to explore the world?
+            </h2>
+            <p className="text-white/75 text-lg mb-8">
+              Join 400,000+ travelers who found their perfect companion on YathraGo.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/register"
+                className="px-10 py-4 bg-white text-[#003580] font-bold rounded-xl hover:bg-gray-100 transition-colors text-base shadow-lg"
+              >
+                Get started — it&apos;s free
+              </Link>
+              <Link
+                href="/discover"
+                className="px-10 py-4 border border-white/40 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors text-base"
+              >
+                Browse destinations
+              </Link>
+            </div>
           </div>
         </section>
       )}
 
-      {/* Footer */}
-      <footer className="bg-black text-white py-8 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="font-bold">© 2026 YathraGo. All rights reserved.</p>
+      {/* ── FOOTER ───────────────────────────────────────────── */}
+      <footer className="bg-gray-900 text-gray-400 py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 p-1">
+                <img src="/black_ver.png" alt="YathraGo" className="w-full h-full object-contain filter invert opacity-70" />
+              </div>
+              <span className="text-white text-lg font-bold">YathraGo</span>
+            </div>
+            <p className="text-sm">© 2026 YathraGo. All rights reserved.</p>
+            <div className="flex gap-6 text-sm">
+              <Link href="/discover" className="hover:text-white transition-colors">Explore</Link>
+              <Link href="/trip-advisor" className="hover:text-white transition-colors">Trip Advisor</Link>
+              <Link href="/chatrooms" className="hover:text-white transition-colors">Community</Link>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

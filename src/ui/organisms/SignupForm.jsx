@@ -73,67 +73,69 @@ const SignupForm = () => {
 
   return (
     <div className="w-full max-w-md">
-      {/* Header */}
+      {/* Logo */}
       <div className="mb-8 text-center">
-        <Texts type="heading" className="mb-2">SIGN UP</Texts>
-        <div className="h-2 w-24 bg-[#4ADE80] border-4 border-black mx-auto"></div>
+        <div className="inline-flex items-center gap-2 mb-4">
+          <div className="w-9 h-9 rounded-lg overflow-hidden">
+            <img src="/black_ver.png" alt="YathraGo" className="w-full h-full object-contain" />
+          </div>
+          <span className="text-xl font-bold text-[#003580]">YathraGo</span>
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
+        <p className="text-sm text-gray-500 mt-1">Join thousands of travelers worldwide</p>
       </div>
 
-      {/* Form Container */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white border-4 border-black text-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-8"
-      >
-        <FormField
-          label="Full Name"
-          type="text"
-          placeholder="John Doe"
-          name="name"
-          value={name}
-          onChange={handleChange}
-        />
-        <FormField
-          label="Email"
-          type="email"
-          placeholder="your.email@example.com"
-          name="email"
-          value={email}
-          onChange={handleChange}
-        />
-        <FormField
-          label="Password"
-          type="password"
-          placeholder="Create a strong password"
-          name="password"
-          value={password}
-          onChange={handleChange}
-        />
+      {/* Form */}
+      <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 border border-gray-100">
+        <form onSubmit={handleSubmit}>
+          <FormField
+            label="Full name"
+            type="text"
+            placeholder="John Doe"
+            name="name"
+            value={name}
+            onChange={handleChange}
+          />
+          <FormField
+            label="Email address"
+            type="email"
+            placeholder="you@example.com"
+            name="email"
+            value={email}
+            onChange={handleChange}
+          />
+          <FormField
+            label="Password"
+            type="password"
+            placeholder="Create a strong password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
 
-        {error && (
-          <div className="mb-4 p-3 bg-[#FF6B6B] border-4 border-black">
-            <Texts type="error" className="text-white">{error}</Texts>
-          </div>
-        )}
+          {error && (
+            <div className="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 p-3.5 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-600 text-sm">{success}</p>
+            </div>
+          )}
 
-        {success && (
-          <div className="mb-4 p-3 bg-[#4ADE80] border-4 border-black">
-            <Texts type="success" className="text-white">{success}</Texts>
-          </div>
-        )}
+          <Button type="submit" name="register" className="w-full justify-center py-3 text-base mt-1">
+            Create account
+          </Button>
+        </form>
 
-        <Button type="submit" name="register">
-          REGISTER →
-        </Button>
-
-        <div className="mt-6 text-center">
-          <Texts type="info">
-            Already a member?{" "}
-            <Link href="/login" className="font-black underline hover:text-[#4ADE80] transition-colors">
-              Sign-In Now
-            </Link>
-          </Texts>
-        </div>
-      </form>
+        <p className="mt-5 text-center text-sm text-gray-500">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-[#003580] hover:underline">
+            Sign in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

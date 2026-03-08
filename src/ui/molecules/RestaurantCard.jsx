@@ -1,120 +1,99 @@
 import React from "react";
 
 const RestaurantCard = ({ restaurant, onClick }) => {
-  const colors = ["#FF6B6B", "#4ADE80", "#00D9FF", "#FFC700", "#FF69B4"];
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+  const renderStars = (rating) =>
+    Array.from({ length: 5 }, (_, i) => (
+      <span key={i} className={i < Math.round(rating) ? "text-yellow-400" : "text-gray-200"}>★</span>
+    ));
 
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="group h-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all overflow-hidden cursor-pointer"
+      className="group bg-white rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer border border-gray-100"
     >
-        {/* Image */}
-        <div
-          className="h-48 relative overflow-hidden border-b-4 border-black"
-          style={{ backgroundColor: randomColor }}
-        >
-          {restaurant.images && restaurant.images[0] ? (
-            <img
-              src={restaurant.images[0]}
-              alt={restaurant.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-6xl">
-              🍽️
-            </div>
-          )}
-          
-          {/* Price Badge */}
-          <div className="absolute top-3 right-3 px-3 py-1 bg-white border-3 border-black font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      {/* Image */}
+      <div className="h-52 relative overflow-hidden bg-gray-50">
+        {restaurant.images && restaurant.images[0] ? (
+          <img
+            src={restaurant.images[0]}
+            alt={restaurant.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
+            <span className="text-5xl opacity-30">🍽️</span>
+          </div>
+        )}
+        {restaurant.priceRange && (
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
             {restaurant.priceRange}
           </div>
+        )}
+        {restaurant.restaurantType && (
+          <div className="absolute top-3 left-3 bg-orange-500/90 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+            {restaurant.restaurantType}
+          </div>
+        )}
+      </div>
 
-          {/* Rating */}
-          {restaurant.rating > 0 && (
-            <div className="absolute bottom-3 left-3 px-3 py-1 bg-[#FFC700] border-3 border-black font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              ⭐ {restaurant.rating.toFixed(1)}
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="text-xl font-black mb-2 line-clamp-2 text-black group-hover:text-[#FF6B6B] transition-colors">
+      {/* Content */}
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-1">
+          <h3 className="text-base font-semibold text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
             {restaurant.name}
           </h3>
-
-          <div className="flex items-center gap-2 mb-2 text-sm font-bold text-black">
-            <span>📍</span>
-            <span className="line-clamp-1">{restaurant.city}, {restaurant.country}</span>
-          </div>
-
-          {/* Cuisine Tags */}
-          {restaurant.cuisine && restaurant.cuisine.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {restaurant.cuisine.slice(0, 3).map((c, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-[#FF6B6B] border-2 border-black font-bold text-black text-xs"
-                >
-                  {c}
-                </span>
-              ))}
-              {restaurant.cuisine.length > 3 && (
-                <span className="px-3 py-1 bg-gray-100 border-2 border-black font-bold text-xs">
-                  +{restaurant.cuisine.length - 3}
-                </span>
-              )}
+          {restaurant.rating > 0 && (
+            <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+              <span className="text-sm font-bold text-gray-800">{restaurant.rating.toFixed(1)}</span>
+              <div className="flex text-xs">{renderStars(restaurant.rating)}</div>
             </div>
           )}
+        </div>
 
-          <p className="text-sm font-medium text-black line-clamp-3 mb-3">
-            {restaurant.description}
-          </p>
+        <p className="text-xs text-gray-400 flex items-center gap-1 mb-2">
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+          </svg>
+          {restaurant.city}, {restaurant.country}
+        </p>
 
-          {/* Dietary Options */}
-          {restaurant.dietaryOptions && restaurant.dietaryOptions.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {restaurant.dietaryOptions.slice(0, 3).map((option, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-[#4ADE80] border-2 border-black text-xs font-bold"
-                >
-                  {option}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Price and Type */}
-          <div className="pt-3 border-t-2 border-black">
-            <div className="flex items-center justify-between mb-2">
-              {restaurant.averageCost && restaurant.averageCost.amount > 0 ? (
-                <span className="text-lg font-black text-black">
-                  {restaurant.averageCost.currency} {restaurant.averageCost.amount}
-                  {restaurant.averageCost.perPerson && <span className="text-sm">/person</span>}
-                </span>
-              ) : (
-                <span className="text-sm font-bold text-black">{restaurant.priceRange}</span>
-              )}
-            </div>
-
-            {restaurant.restaurantType && (
-              <span className="inline-block px-2 py-1 bg-gray-100 border-2 border-black text-xs font-bold text-black">
-                {restaurant.restaurantType}
+        {restaurant.cuisine && restaurant.cuisine.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {restaurant.cuisine.slice(0, 3).map((c, i) => (
+              <span key={i} className="bg-orange-50 text-orange-600 text-xs px-2.5 py-1 rounded-full border border-orange-100">
+                {c}
               </span>
-            )}
-
-            {/* Reviews */}
-            {restaurant.reviewCount > 0 && (
-              <div className="text-xs font-medium text-black mt-2">
-                {restaurant.reviewCount} reviews
-              </div>
-            )}
+            ))}
           </div>
+        )}
+
+        <p className="text-sm text-gray-500 line-clamp-2 mb-3">{restaurant.description}</p>
+
+        {restaurant.dietaryOptions && restaurant.dietaryOptions.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {restaurant.dietaryOptions.slice(0, 3).map((opt, i) => (
+              <span key={i} className="bg-green-50 text-green-600 text-xs px-2.5 py-1 rounded-full border border-green-100">
+                {opt}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="pt-3 border-t border-gray-100 flex items-end justify-between">
+          {restaurant.averageCost && restaurant.averageCost.amount > 0 ? (
+            <p className="text-lg font-bold text-gray-900">
+              {restaurant.averageCost.currency} {restaurant.averageCost.amount}
+              {restaurant.averageCost.perPerson && <span className="text-xs font-normal text-gray-400"> /person</span>}
+            </p>
+          ) : (
+            <span className="text-sm text-gray-400">{restaurant.priceRange}</span>
+          )}
+          {restaurant.reviewCount > 0 && (
+            <span className="text-xs text-gray-400">{restaurant.reviewCount} reviews</span>
+          )}
         </div>
       </div>
+    </div>
   );
 };
 

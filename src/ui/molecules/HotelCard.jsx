@@ -1,109 +1,95 @@
 import React from "react";
 
 const HotelCard = ({ hotel, onClick }) => {
-  const colors = ["#FF6B6B", "#4ADE80", "#00D9FF", "#FFC700", "#FF69B4"];
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+  const renderStars = (rating) =>
+    Array.from({ length: 5 }, (_, i) => (
+      <span key={i} className={i < Math.round(rating) ? "text-yellow-400" : "text-gray-200"}>★</span>
+    ));
 
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="group h-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all overflow-hidden cursor-pointer"
+      className="group bg-white rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer border border-gray-100"
     >
-        {/* Image */}
-        <div
-          className="h-48 relative overflow-hidden border-b-4 border-black"
-          style={{ backgroundColor: randomColor }}
-        >
-          {hotel.images && hotel.images[0] ? (
-            <img
-              src={hotel.images[0]}
-              alt={hotel.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-6xl">
-              🏨
-            </div>
-          )}
-          
-          {/* Price Badge */}
-          <div className="absolute top-3 right-3 px-3 py-1 bg-white border-3 border-black font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      {/* Image */}
+      <div className="h-52 relative overflow-hidden bg-gray-50">
+        {hotel.images && hotel.images[0] ? (
+          <img
+            src={hotel.images[0]}
+            alt={hotel.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+            <span className="text-5xl opacity-30">🏨</span>
+          </div>
+        )}
+        {hotel.priceRange && (
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
             {hotel.priceRange}
           </div>
+        )}
+        {hotel.hotelType && (
+          <div className="absolute top-3 left-3 bg-[#003580]/90 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+            {hotel.hotelType}
+          </div>
+        )}
+      </div>
 
-          {/* Rating */}
+      {/* Content */}
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-1">
+          <h3 className="text-base font-semibold text-gray-900 line-clamp-1 group-hover:text-[#003580] transition-colors">
+            {hotel.name}
+          </h3>
           {hotel.rating > 0 && (
-            <div className="absolute bottom-3 left-3 px-3 py-1 bg-[#FFC700] border-3 border-black font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              ⭐ {hotel.rating.toFixed(1)}
+            <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+              <span className="text-sm font-bold text-gray-800">{hotel.rating.toFixed(1)}</span>
+              <div className="flex text-xs">{renderStars(hotel.rating)}</div>
             </div>
           )}
         </div>
 
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="text-xl font-black mb-2 line-clamp-2 text-black group-hover:text-[#00D9FF] transition-colors">
-            {hotel.name}
-          </h3>
+        <p className="text-xs text-gray-400 flex items-center gap-1 mb-3">
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+          </svg>
+          {hotel.city}, {hotel.country}
+        </p>
 
-          <div className="flex items-center gap-2 mb-2 text-sm font-bold text-black">
-            <span>📍</span>
-            <span className="line-clamp-1">{hotel.city}, {hotel.country}</span>
-          </div>
+        <p className="text-sm text-gray-500 line-clamp-2 mb-3">{hotel.description}</p>
 
-          {hotel.hotelType && (
-            <div className="mb-3">
-              <span className="inline-block px-3 py-1 bg-[#4ADE80] border-2 border-black font-bold text-xs">
-                {hotel.hotelType}
+        {hotel.amenities && hotel.amenities.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {hotel.amenities.slice(0, 3).map((amenity, i) => (
+              <span key={i} className="bg-gray-50 text-gray-500 text-xs px-2.5 py-1 rounded-full border border-gray-200">
+                {amenity}
               </span>
+            ))}
+            {hotel.amenities.length > 3 && (
+              <span className="bg-gray-50 text-gray-400 text-xs px-2.5 py-1 rounded-full border border-gray-200">+{hotel.amenities.length - 3}</span>
+            )}
+          </div>
+        )}
+
+        <div className="pt-3 border-t border-gray-100 flex items-end justify-between">
+          {hotel.pricePerNight && hotel.pricePerNight.min > 0 ? (
+            <div>
+              <span className="text-xs text-gray-400">From</span>
+              <p className="text-lg font-bold text-[#003580]">
+                {hotel.pricePerNight.currency} {hotel.pricePerNight.min}
+                <span className="text-xs font-normal text-gray-400"> /night</span>
+              </p>
             </div>
+          ) : (
+            <span className="text-sm text-gray-400">Price on request</span>
           )}
-
-          <p className="text-sm font-medium text-black line-clamp-3 mb-3">
-            {hotel.description}
-          </p>
-
-          {/* Amenities */}
-          {hotel.amenities && hotel.amenities.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {hotel.amenities.slice(0, 3).map((amenity, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-gray-100 border-2 border-black text-xs font-bold"
-                >
-                  {amenity}
-                </span>
-              ))}
-              {hotel.amenities.length > 3 && (
-                <span className="px-2 py-1 bg-gray-100 border-2 border-black text-xs font-bold">
-                  +{hotel.amenities.length - 3}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Price Range */}
-          {hotel.pricePerNight && hotel.pricePerNight.min > 0 && (
-            <div className="pt-3 border-t-2 border-black">
-              <div className="flex items-center justify-between text-black">
-                <span className="text-sm font-bold">From</span>
-                <span className="text-xl font-black">
-                  {hotel.pricePerNight.currency} {hotel.pricePerNight.min}
-                  <span className="text-sm">/night</span>
-                </span>
-              </div>
-            </div>
-          )}
-
-
-
-          {/* Reviews */}
           {hotel.reviewCount > 0 && (
-            <div className="text-xs font-medium text-black mt-2">
-              {hotel.reviewCount} reviews
-            </div>
+            <span className="text-xs text-gray-400">{hotel.reviewCount} reviews</span>
           )}
         </div>
       </div>
+    </div>
   );
 };
 

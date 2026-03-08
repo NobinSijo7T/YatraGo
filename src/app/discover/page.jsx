@@ -56,35 +56,38 @@ const DiscoverPage = () => {
     return <Loader />;
   }
 
-  const colors = ["#FF6B6B", "#4ADE80", "#00D9FF", "#FFC700", "#FF69B4"];
+  const colors = ["#003580", "#009fe3", "#00AF87", "#7c3aed", "#db2777"];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="min-h-screen bg-gray-50">
       <MainNavbar />
 
       {/* Header */}
-      <section className="bg-gradient-to-r from-[#4ADE80] to-[#00D9FF] border-b-4 border-black py-12 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase">
+      <section
+        className="relative py-16 px-4 text-white"
+        style={{ background: "linear-gradient(135deg, #003580 0%, #009fe3 60%, #00AF87 100%)" }}
+      >
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-3xl md:text-5xl font-bold mb-2">
             Discover Travelers
           </h1>
-          <p className="text-xl font-bold mb-8">
+          <p className="text-white/80 mb-8">
             Find your perfect travel companion from around the world
           </p>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="max-w-3xl">
-            <div className="flex gap-4">
+          <form onSubmit={handleSearch} className="max-w-2xl">
+            <div className="flex gap-3">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name, city, country..."
-                className="flex-1 px-6 py-4 text-lg font-medium border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none transition-all"
+                className="flex-1 px-5 py-3 rounded-xl text-gray-900 placeholder-gray-400 bg-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all"
               />
               <button
                 type="submit"
-                className="px-8 py-4 bg-[#FFC700] border-4 border-black font-black text-lg text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                className="px-6 py-3 bg-white text-[#003580] font-semibold rounded-xl hover:bg-gray-100 transition-colors"
               >
                 Search
               </button>
@@ -94,17 +97,17 @@ const DiscoverPage = () => {
       </section>
 
       {/* Filters */}
-      <section className="bg-white border-b-4 border-black py-6 px-4 sticky top-20 z-40">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex gap-3 overflow-x-auto pb-2">
+      <section className="bg-white border-b border-gray-200 py-4 px-4 sticky top-28 z-40">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {["all", "online", "verified", "new"].map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-6 py-3 border-4 border-black font-black text-black uppercase whitespace-nowrap transition-all ${
+                className={`px-5 py-2 rounded-full text-sm font-medium capitalize whitespace-nowrap transition-all border ${
                   filter === f
-                    ? "bg-[#FFC700] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                    : "bg-white hover:bg-[#FFC700]"
+                    ? "bg-[#003580] text-white border-[#003580]"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-[#003580] hover:text-[#003580]"
                 }`}
               >
                 {f}
@@ -115,7 +118,7 @@ const DiscoverPage = () => {
       </section>
 
       {/* Users Grid */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
+      <section className="max-w-5xl mx-auto px-4 py-10">
         {loading ? (
           <div className="flex justify-center py-20">
             <Loader />
@@ -123,72 +126,69 @@ const DiscoverPage = () => {
         ) : users.length > 0 ? (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-black">
-                {users.length} Traveler{users.length !== 1 ? "s" : ""} Found
-              </h2>
+              <p className="text-sm text-gray-500">
+                {users.length} traveler{users.length !== 1 ? "s" : ""} found
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {users.map((user, index) => (
                 <div
                   key={user._id || index}
-                  className="bg-white border-4 border-black text-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                  className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all overflow-hidden"
                 >
                   {/* Header with Avatar */}
-                  <div
-                    className="p-6 border-b-4 border-black text-black"
-                    style={{ backgroundColor: colors[index % colors.length] }}
-                  >
-                    <div className="flex items-center gap-4">
+                  <div className="p-5 border-b border-gray-100">
+                    <div className="flex items-center gap-3">
                       {user.profileImage ? (
                         <img
                           src={user.profileImage}
                           alt={user.name}
-                          className="w-16 h-16 border-4 border-black rounded-full object-cover"
+                          className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
                         />
                       ) : (
-                        <div className="w-16 h-16 bg-white border-4 border-black rounded-full flex items-center justify-center font-black text-2xl text-black">
+                        <div
+                          className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
+                          style={{ backgroundColor: colors[index % colors.length] }}
+                        >
                           {user.name?.charAt(0).toUpperCase()}
                         </div>
                       )}
-                      <div className="flex-1">
-                        <h3 className="text-xl font-black text-black">{user.name}</h3>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 truncate">{user.name}</h3>
                         {user.email && (
-                          <p className="font-medium text-sm truncate text-black">{user.email}</p>
+                          <p className="text-xs text-gray-400 truncate">{user.email}</p>
                         )}
                       </div>
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
+                  <div className="p-5">
                     {user.bio && (
-                      <p className="font-medium mb-4">&ldquo;{user.bio}&rdquo;</p>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">&ldquo;{user.bio}&rdquo;</p>
                     )}
 
                     {/* Travel Info */}
                     {(user.travelCity || user.travelCountry) && (
-                      <div className="mb-4 p-3 bg-[#FAFAFA] border-2 border-black text-black">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xl">📍</span>
-                          <span className="font-black text-sm text-black">Traveling to:</span>
-                        </div>
-                        <p className="font-bold text-black">
+                      <div className="mb-4 flex items-center gap-2">
+                        <span className="text-base">📍</span>
+                        <span className="text-sm text-gray-600 font-medium">
                           {user.travelCity}
                           {user.travelCity && user.travelCountry && ", "}
                           {user.travelCountry}
-                        </p>
+                        </span>
                       </div>
                     )}
 
                     {/* Action Buttons */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mt-3">
                       <Link
                         href={`/chats/new?userId=${user._id}`}
-                        className="flex-1 px-4 py-3 bg-[#4ADE80] border-4 border-black font-black text-black text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                        className="flex-1 px-4 py-2 bg-[#003580] text-white text-sm font-semibold text-center rounded-lg hover:bg-[#002a6e] transition-colors"
                       >
                         Chat
                       </Link>
-                      <button className="px-4 py-3 bg-white border-4 border-black font-black text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
+                      <button className="px-4 py-2 bg-gray-50 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
                         👋
                       </button>
                     </div>
@@ -199,17 +199,14 @@ const DiscoverPage = () => {
           </>
         ) : (
           <div className="text-center py-20">
-            <div className="text-8xl mb-6">🔍</div>
-            <h3 className="text-3xl font-black mb-4">No travelers found</h3>
-            <p className="text-xl font-medium mb-8">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No travelers found</h3>
+            <p className="text-gray-400 mb-6">
               Try adjusting your search or filters
             </p>
             <button
-              onClick={() => {
-                setSearchQuery("");
-                fetchUsers();
-              }}
-              className="px-8 py-4 bg-[#4ADE80] border-4 border-black font-black text-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+              onClick={() => { setSearchQuery(""); fetchUsers(); }}
+              className="px-6 py-2.5 bg-[#003580] text-white font-semibold rounded-lg hover:bg-[#002a6e] transition-colors"
             >
               Clear Search
             </button>

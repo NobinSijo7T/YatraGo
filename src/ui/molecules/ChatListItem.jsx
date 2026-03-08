@@ -35,20 +35,20 @@ const ChatListItem = ({ chat, currentUser }) => {
   return (
     <Link href={`/chats/${chat._id}`}>
       <div
-        className={`flex items-center gap-3 p-4 border-b-2 border-black hover:bg-[#FFC700] transition-colors cursor-pointer ${
-          isActive ? "bg-[#4ADE80]" : "bg-white"
+        className={`flex items-center gap-3 px-4 py-3.5 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer ${
+          isActive ? "bg-[#003580]/5 border-l-2 border-l-[#003580]" : ""
         }`}
       >
         {/* Avatar */}
-        <div className="w-12 h-12 bg-[#00D9FF] border-3 border-black flex items-center justify-center font-black text-xl text-black flex-shrink-0">
+        <div className="w-10 h-10 bg-[#003580] rounded-full flex items-center justify-center text-white text-base flex-shrink-0">
           {chat?.isGroup ? "👥" : "👤"}
         </div>
 
         {/* Chat Info */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-black text-black truncate">{chatName}</h4>
+          <h4 className="font-semibold text-gray-900 text-sm truncate">{chatName}</h4>
           {truncatedMessage && (
-            <p className="text-sm font-medium text-black opacity-70 truncate">
+            <p className="text-xs text-gray-400 truncate mt-0.5">
               {truncatedMessage}
             </p>
           )}

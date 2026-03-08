@@ -6,10 +6,10 @@ import Scene from "../organisms/Scene";
 
 const ChatPage = ({ type }) => {
   return (
-    <div className="flex flex-col h-screen bg-[#FAFAFA]">
+    <div className="flex flex-col h-screen bg-gray-50">
       <MainNavbar />
-      <div className="flex w-full overflow-hidden" style={{ height: 'calc(100vh - 80px)' }}>
-        <div className="w-[30%] max-md:hidden border-r-4 border-black">
+      <div className="flex w-full overflow-hidden" style={{ height: 'calc(100vh - 112px)' }}>
+        <div className="w-[30%] max-md:hidden border-r border-gray-200 bg-white">
           <ChatList />
         </div>
         <div className="w-[70%] max-md:w-full">

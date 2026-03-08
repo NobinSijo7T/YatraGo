@@ -34,21 +34,22 @@ const ChatList = () => {
   return (
     <div className="h-full flex flex-col bg-white overflow-y-auto">
       {/* Header */}
-      <div className="p-4 border-b-4 border-black bg-[#FF6B6B]">
-        <h2 className="text-2xl font-black text-black uppercase">Chats</h2>
+      <div className="px-5 py-4 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
       </div>
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="p-4 text-center">
-            <p className="font-bold text-black">Loading...</p>
+          <div className="p-6 text-center">
+            <div className="w-6 h-6 border-2 border-[#003580] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <p className="text-sm text-gray-500">Loading chats...</p>
           </div>
         ) : chats.length === 0 ? (
-          <div className="p-4 text-center">
-            <div className="text-5xl mb-2">💬</div>
-            <p className="font-bold text-black">No chats yet</p>
-            <p className="text-sm font-medium text-black opacity-70">Start a conversation!</p>
+          <div className="p-8 text-center">
+            <div className="text-4xl mb-3">💬</div>
+            <p className="font-semibold text-gray-700 mb-1">No chats yet</p>
+            <p className="text-sm text-gray-400">Start a conversation!</p>
           </div>
         ) : (
           chats.map((chat) => (

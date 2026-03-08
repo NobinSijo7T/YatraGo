@@ -1,32 +1,32 @@
 import React from "react";
 
 const Texts = ({ type, children, className = "" }) => {
-  const baseClass = "";
   let typeClass = "";
 
   switch (type) {
     case "heading":
-      typeClass = "text-5xl font-black uppercase tracking-tight text-black";
+      typeClass = "text-3xl font-bold text-gray-900 tracking-tight";
       break;
     case "subheading":
-      typeClass = "text-2xl font-bold text-black mb-8";
+      typeClass = "text-xl font-semibold text-gray-800";
       break;
     case "label":
-      typeClass = "block text-base font-black mb-2 text-black uppercase tracking-wide";
+      typeClass = "block text-sm font-medium text-gray-700 mb-1";
       break;
     case "error":
-      typeClass = "text-[#FF6B6B] text-sm font-bold";
+      typeClass = "text-red-500 text-sm";
       break;
     case "success":
-      typeClass = "text-[#4ADE80] text-sm font-bold";
+      typeClass = "text-green-600 text-sm";
       break;
     case "info":
-      typeClass = "text-base font-medium text-black mt-4";
+      typeClass = "text-sm text-gray-500";
       break;
     default:
-      typeClass = "";
+      typeClass = "text-sm text-gray-600";
   }
-  return <p className={`${baseClass} ${typeClass} ${className}`}>{children}</p>;
+
+  return <p className={`${typeClass} ${className}`}>{children}</p>;
 };
 
 export default Texts;

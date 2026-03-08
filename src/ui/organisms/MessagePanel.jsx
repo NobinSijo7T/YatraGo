@@ -260,9 +260,9 @@ const MessagePanel = () => {
     return (
       <div className="h-full flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="text-8xl mb-4">💬</div>
-          <h3 className="text-2xl font-black text-black mb-2">Select a Chat</h3>
-          <p className="text-lg font-medium text-black">Choose a conversation to start messaging</p>
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">💬</div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-1">Select a Chat</h3>
+          <p className="text-sm text-gray-400">Choose a conversation to start messaging</p>
         </div>
       </div>
     );
@@ -271,29 +271,27 @@ const MessagePanel = () => {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Chat Header */}
-      <div className="flex items-center justify-between p-4 bg-[#4ADE80] border-b-4 border-black">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white border-3 border-black rounded-full overflow-hidden flex items-center justify-center font-black text-2xl text-black">
-            {chatDetails?.isGroup ? '👥' : '👤'}
-          </div>
-          <div>
-            <h3 className="text-xl font-black text-black">
-              {chatDetails ? (
-                chatDetails.isGroup
-                  ? chatDetails.groupName || 'Group Chat'
-                  : chatDetails.otherUserName || 'Chat'
-              ) : (
-                'Loading...'
-              )}
-            </h3>
-            <p className="text-sm font-bold text-black opacity-80">
-              {chatDetails ? (
-                chatDetails.isGroup ? `${chatDetails.members?.length || 0} members` : 'Online'
-              ) : (
-                'Connecting...'
-              )}
-            </p>
-          </div>
+      <div className="flex items-center gap-3 px-5 py-4 bg-white border-b border-gray-200">
+        <div className="w-10 h-10 bg-[#003580] rounded-full overflow-hidden flex items-center justify-center text-white font-semibold text-base">
+          {chatDetails?.isGroup ? '👥' : '👤'}
+        </div>
+        <div>
+          <h3 className="text-base font-semibold text-gray-900">
+            {chatDetails ? (
+              chatDetails.isGroup
+                ? chatDetails.groupName || 'Group Chat'
+                : chatDetails.otherUserName || 'Chat'
+            ) : (
+              'Loading...'
+            )}
+          </h3>
+          <p className="text-xs text-gray-400">
+            {chatDetails ? (
+              chatDetails.isGroup ? `${chatDetails.members?.length || 0} members` : 'Active now'
+            ) : (
+              'Connecting...'
+            )}
+          </p>
         </div>
       </div>
 
@@ -302,9 +300,9 @@ const MessagePanel = () => {
         {!Array.isArray(messages) || messages.length === 0 ? (
           <div className="h-full flex items-center justify-center">
             <div className="text-center">
-              <div className="text-6xl mb-3">💭</div>
-              <p className="text-lg font-bold text-black">No messages yet</p>
-              <p className="text-sm font-medium text-black opacity-70">Start the conversation!</p>
+              <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">💭</div>
+              <p className="text-gray-700 font-semibold">No messages yet</p>
+              <p className="text-sm text-gray-400">Start the conversation!</p>
             </div>
           </div>
         ) : (
@@ -327,7 +325,7 @@ const MessagePanel = () => {
       </div>
 
       {/* Chat Input */}
-      <div className="p-4 border-t-4 border-black bg-white">
+      <div className="p-4 border-t border-gray-200 bg-white">
         <ChatInput onSendMessage={addMessage} />
       </div>
     </div>

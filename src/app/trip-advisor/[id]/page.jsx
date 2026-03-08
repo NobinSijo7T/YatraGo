@@ -15,8 +15,6 @@ const DestinationDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  const colors = ["#FF6B6B", "#4ADE80", "#00D9FF", "#FFC700", "#FF69B4", "#00CED1"];
-
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/");
@@ -66,17 +64,17 @@ const DestinationDetailPage = () => {
 
   if (notFound) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gray-50">
         <MainNavbar />
-        <div className="container mx-auto px-4 py-20 text-center">
-          <div className="text-9xl mb-6">🚫</div>
-          <h1 className="text-5xl font-black mb-4 uppercase text-black">Destination Not Found</h1>
-          <p className="text-xl font-medium text-black mb-8">
+        <div className="container mx-auto px-4 py-24 text-center">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">🚫</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">Destination Not Found</h1>
+          <p className="text-gray-500 mb-8">
             The destination you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Link
             href="/trip-advisor"
-            className="inline-block px-8 py-4 bg-black border-4 border-black text-white font-black text-xl hover:bg-gray-800 transition-colors shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px]"
+            className="inline-block px-6 py-3 bg-[#003580] text-white font-semibold rounded-xl hover:bg-[#002a6e] transition-colors"
           >
             ← Back to Destinations
           </Link>
@@ -87,18 +85,15 @@ const DestinationDetailPage = () => {
 
   if (!destination) return null;
 
-  // Get a color for this destination based on its index or use first color
-  const destinationColor = colors[0];
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <MainNavbar />
 
       {/* Back Button */}
-      <div className="container mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 pt-6">
         <Link
           href="/trip-advisor"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white border-3 border-black font-bold text-black hover:bg-gray-100 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+          className="inline-flex items-center gap-1.5 text-sm text-[#003580] font-medium hover:underline transition-colors"
         >
           ← Back to Destinations
         </Link>
@@ -106,24 +101,24 @@ const DestinationDetailPage = () => {
 
       {/* Hero Header */}
       <div
-        className="py-20 border-y-8 border-black"
-        style={{ backgroundColor: destinationColor }}
+        className="mt-4 py-16 text-white"
+        style={{ background: "linear-gradient(135deg, #003580 0%, #009fe3 60%, #00AF87 100%)" }}
       >
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-6xl md:text-8xl font-black mb-6 uppercase text-black">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-5">
             {destination.name}
           </h1>
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            <span className="px-4 py-2 bg-white border-3 border-black font-black text-sm text-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <span className="px-3 py-1 rounded-full border border-white/30 text-white text-sm bg-white/10">
               {destination.category}
             </span>
             {destination.continent && (
-              <span className="px-4 py-2 bg-white border-3 border-black font-black text-sm text-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <span className="px-3 py-1 rounded-full border border-white/30 text-white text-sm bg-white/10">
                 📍 {destination.continent}
               </span>
             )}
             {destination.expense && (
-              <span className="px-4 py-2 bg-white border-3 border-black font-black text-sm text-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <span className="px-3 py-1 rounded-full border border-white/30 text-white text-sm bg-white/10">
                 💰 {destination.expense}
               </span>
             )}
@@ -132,25 +127,23 @@ const DestinationDetailPage = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <div className="space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-10">
+        <div className="space-y-6">
           {/* About Section */}
-          <section className="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <h2 className="text-3xl font-black mb-6 uppercase bg-[#4ADE80] inline-block px-4 py-2 border-3 border-black text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              About
-            </h2>
-            <p className="text-xl font-medium leading-relaxed text-black">
+          <section className="bg-white rounded-2xl border border-gray-100 p-8 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">About</p>
+            <p className="text-gray-700 leading-relaxed text-lg">
               {destination.details}
             </p>
           </section>
 
           {/* Images Grid (if available) */}
           {destination.images && destination.images.length > 0 && (
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {destination.images.slice(0, 4).map((image, i) => (
                 <div
                   key={i}
-                  className="h-64 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
+                  className="h-56 rounded-xl overflow-hidden"
                 >
                   <img
                     src={image}
@@ -164,17 +157,15 @@ const DestinationDetailPage = () => {
 
           {/* Packing List */}
           {destination.packingList && destination.packingList.length > 0 && (
-            <section className="bg-[#FFC700]/10 border-4 border-[#FFC700] p-8 shadow-[8px_8px_0px_0px_rgba(255,199,0,1)]">
-              <h2 className="text-3xl font-black mb-6 uppercase flex items-center gap-3 text-black">
-                <span className="text-4xl">🎒</span> Packing List
-              </h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section className="bg-amber-50 rounded-2xl border border-amber-200 p-8">
+              <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-4">🎒 Packing List</p>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {destination.packingList.map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 font-bold text-black bg-white p-3 border-2 border-black">
-                    <span className="w-6 h-6 border-2 border-black flex items-center justify-center text-xs bg-[#FFC700] text-black flex-shrink-0">
+                  <li key={i} className="flex items-center gap-3 text-gray-700">
+                    <span className="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center text-white text-xs flex-shrink-0">
                       ✓
                     </span>
-                    {item}
+                    <span className="text-sm font-medium">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -183,20 +174,18 @@ const DestinationDetailPage = () => {
 
           {/* Things to Do */}
           {destination.whatToDo && destination.whatToDo.length > 0 && (
-            <section className="bg-[#00D9FF]/10 border-4 border-[#00D9FF] p-8 shadow-[8px_8px_0px_0px_rgba(0,217,255,1)]">
-              <h2 className="text-3xl font-black mb-6 uppercase flex items-center gap-3 text-black">
-                <span className="text-4xl">🎭</span> Things to Do
-              </h2>
-              <div className="space-y-4">
+            <section className="bg-sky-50 rounded-2xl border border-sky-100 p-8">
+              <p className="text-xs font-semibold text-sky-600 uppercase tracking-wider mb-5">🎭 Things to Do</p>
+              <div className="space-y-3">
                 {destination.whatToDo.map((activity, i) => (
                   <div
                     key={i}
-                    className="flex items-start gap-4 p-4 bg-white border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className="flex items-start gap-4 p-4 bg-white rounded-xl border border-sky-100"
                   >
-                    <span className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-[#00D9FF] border-2 border-black font-black text-xl text-black">
+                    <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[#003580] rounded-full text-white text-sm font-semibold">
                       {i + 1}
                     </span>
-                    <span className="font-bold text-lg text-black pt-1">{activity}</span>
+                    <span className="text-gray-700 pt-1">{activity}</span>
                   </div>
                 ))}
               </div>
@@ -205,11 +194,11 @@ const DestinationDetailPage = () => {
 
           {/* Tags */}
           {destination.tags && destination.tags.length > 0 && (
-            <section className="flex flex-wrap gap-3">
+            <section className="flex flex-wrap gap-2">
               {destination.tags.map((tag, i) => (
                 <span
                   key={i}
-                  className="px-4 py-2 bg-white border-2 border-black font-bold text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                  className="px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-600 text-sm hover:border-[#003580] hover:text-[#003580] transition-colors"
                 >
                   #{tag}
                 </span>
@@ -218,14 +207,17 @@ const DestinationDetailPage = () => {
           )}
 
           {/* CTA Section */}
-          <section className="bg-black text-white p-8 border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center">
-            <h3 className="text-3xl font-black mb-4 text-white">Ready to explore {destination.name}?</h3>
-            <p className="text-lg font-medium mb-6 text-white">
+          <section
+            className="rounded-2xl p-8 text-white text-center"
+            style={{ background: "linear-gradient(135deg, #003580 0%, #009fe3 100%)" }}
+          >
+            <h3 className="text-2xl font-bold mb-3">Ready to explore {destination.name}?</h3>
+            <p className="text-white/80 mb-6">
               Find travel companions who want to visit this destination!
             </p>
             <Link
               href="/discover"
-              className="inline-block px-8 py-4 bg-[#4ADE80] text-black border-3 border-black font-black text-xl hover:bg-[#22C55E] transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+              className="inline-block px-7 py-3 bg-white text-[#003580] font-semibold rounded-xl hover:bg-gray-100 transition-colors"
             >
               Find Companion →
             </Link>

@@ -102,62 +102,67 @@ const SOSAlertNotification = () => {
   }
 
   return (
-    <div className="fixed top-20 right-4 z-50 space-y-4 max-w-md">
+    <div className="fixed top-20 right-4 z-50 space-y-3 max-w-sm w-full">
       {alerts.map((alert) => (
         <div
           key={alert.id}
-          className="bg-red-600 text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4"
+          className="bg-white border border-red-200 rounded-2xl shadow-[0_8px_32px_rgba(220,38,38,0.18)] overflow-hidden"
         >
-          <div className="flex items-start justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🚨</span>
-              <h3 className="text-xl font-black">EMERGENCY SOS ALERT!</h3>
-            </div>
-            <button
-              onClick={() => dismissAlert(alert.alertId)}
-              className="text-white hover:text-gray-200 text-2xl font-bold leading-none"
-            >
-              ×
-            </button>
-          </div>
+          {/* Red top accent bar */}
+          <div className="h-1 w-full bg-red-500" />
 
-          <div className="space-y-2">
-            <div className="bg-white text-black p-3 border-2 border-black">
-              <p className="font-bold text-lg">{alert.userName}</p>
-              <p className="text-sm opacity-80">{alert.userEmail}</p>
+          <div className="p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-base">
+                  🚨
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-red-700 uppercase tracking-wide">SOS Emergency Alert</h3>
+                </div>
+              </div>
+              <button
+                onClick={() => dismissAlert(alert.alertId)}
+                className="text-gray-400 hover:text-gray-700 transition-colors text-lg leading-none p-1"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="bg-red-50 rounded-xl p-3 mb-3">
+              <p className="font-semibold text-gray-900">{alert.userName}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{alert.userEmail}</p>
               {alert.userLocation?.travelCity && (
-                <p className="text-sm mt-1">
+                <p className="text-sm text-gray-600 mt-1">
                   📍 {alert.userLocation.travelCity}
                   {alert.userLocation.travelCountry && `, ${alert.userLocation.travelCountry}`}
                 </p>
               )}
             </div>
 
-            <p className="text-white font-bold text-center py-2">
-              {alert.message}
-            </p>
+            <p className="text-sm text-gray-700 mb-3 font-medium">{alert.message}</p>
 
             <div className="flex gap-2">
               <a
                 href={`https://mail.google.com/mail/?view=cm&fs=1&to=${alert.userEmail}&su=Emergency%20Response%20-%20SOS%20Alert&body=Hi%20${alert.userName},%0D%0A%0D%0AI%20saw%20your%20SOS%20alert.%20How%20can%20I%20help%3F`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 px-4 py-2 bg-white text-red-600 font-bold text-center border-2 border-black hover:bg-gray-100 transition-colors"
+                className="flex-1 px-3 py-2 bg-white border border-red-200 text-red-600 text-sm font-semibold text-center rounded-lg hover:bg-red-50 transition-colors"
               >
                 📧 Email
               </a>
               <a
                 href={`/chats/new?userId=${alert.userId}`}
-                className="flex-1 px-4 py-2 bg-white text-red-600 font-bold text-center border-2 border-black hover:bg-gray-100 transition-colors"
+                className="flex-1 px-3 py-2 bg-[#003580] text-white text-sm font-semibold text-center rounded-lg hover:bg-[#002a6e] transition-colors"
               >
                 💬 Chat
               </a>
             </div>
-          </div>
 
-          <p className="text-xs text-center mt-2 opacity-75">
-            {new Date(alert.timestamp).toLocaleTimeString()}
-          </p>
+            <p className="text-xs text-gray-400 text-center mt-2">
+              {new Date(alert.timestamp).toLocaleTimeString()}
+            </p>
+          </div>
         </div>
       ))}
     </div>

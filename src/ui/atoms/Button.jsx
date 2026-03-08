@@ -1,31 +1,34 @@
-"use client"; // Ensure this component is client-side rendered
+"use client";
 import React from "react";
 import { signOut } from "next-auth/react";
 
-const Button = ({ children, onClick, name, type = "button" }) => {
-  let baseClass = "px-6 py-3 font-bold text-lg cursor-pointer border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px]";
-  let typeClass = "";
+const Button = ({ children, onClick, name, type = "button", className = "", disabled }) => {
+  const base =
+    "inline-flex items-center justify-center px-6 py-3 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+
+  let variant = "";
 
   switch (name) {
     case "login":
-      typeClass = "bg-[#00D9FF] text-black hover:bg-[#00C4E6]";
+      variant = "bg-[#003580] text-white hover:bg-[#00266b] focus:ring-[#003580]";
       break;
     case "logout":
-      typeClass = "bg-[#FF6B6B] text-white hover:bg-[#FF5252]";
-      onClick = () => signOut({ callbackUrl: "/" });
+      variant = "bg-white text-[#cc0000] border border-[#e5e7eb] hover:bg-red-50 focus:ring-red-300";
+      onClick = onClick || (() => signOut({ callbackUrl: "/" }));
       break;
     case "register":
-      typeClass = "bg-[#4ADE80] text-black hover:bg-[#22C55E]";
+      variant = "bg-[#009fe3] text-white hover:bg-[#007ec0] focus:ring-[#009fe3]";
       break;
     default:
-      typeClass = "bg-[#FFC700] text-black hover:bg-[#FFB800]";
+      variant = "bg-[#003580] text-white hover:bg-[#00266b] focus:ring-[#003580]";
   }
 
   return (
-    <button 
+    <button
       type={type}
-      className={`${baseClass} ${typeClass}`} 
+      className={`${base} ${variant} ${className}`}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

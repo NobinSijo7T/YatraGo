@@ -96,42 +96,71 @@ const EditProfile = () => {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col justify-center items-center p-10 m-20 mx-60 rounded-lg bg-gradient-to-br from-fuchsia-500 to-pink-500"
-    >
-      <FormField
-        label="Full Name"
-        type="text"
-        placeholder="Enter your full name"
-        value={formData.name}
-        onChange={handleChange}
-      />
-      <FormField
-        label="Bio"
-        type="text"
-        placeholder="Enter your bio"
-        value={formData.bio}
-        onChange={handleChange}
-      />
-      <FormField
-        label="Travel City"
-        type="text"
-        name="travelCity"
-        placeholder="Enter your travel city"
-        value={travelCity}
-        onChange={(e) => setTravelCity(e.target.value)}
-      />
-      <FormField
-        label="Travel Country"
-        type="text"
-        name="travelCountry"
-        placeholder="Enter your travel country"
-        value={travelCountry}
-        onChange={(e) => setTravelCountry(e.target.value)}
-      />
-      <Button type="submit">Update Profile</Button>
-    </form>
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Edit Profile</h1>
+          <p className="text-gray-500 text-sm mt-1">Update your travel profile information</p>
+        </div>
+
+        {/* Card */}
+        <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-gray-100 p-8">
+          {/* Avatar placeholder */}
+          <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100">
+            <div className="w-16 h-16 bg-[#003580] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              {formData.name?.charAt(0).toUpperCase() || "?"}
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900">{formData.name || "Your Name"}</p>
+              <p className="text-sm text-gray-400">{session?.user?.email}</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <FormField
+              label="Full Name"
+              type="text"
+              placeholder="Enter your full name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <FormField
+              label="Bio"
+              type="text"
+              placeholder="Share a little about yourself..."
+              name="bio"
+              value={formData.bio}
+              onChange={handleChange}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                label="Travel City"
+                type="text"
+                name="travelCity"
+                placeholder="City"
+                value={travelCity}
+                onChange={(e) => setTravelCity(e.target.value)}
+              />
+              <FormField
+                label="Travel Country"
+                type="text"
+                name="travelCountry"
+                placeholder="Country"
+                value={travelCountry}
+                onChange={(e) => setTravelCountry(e.target.value)}
+              />
+            </div>
+            <div className="pt-2">
+              <Button type="submit" name="login" className="w-full justify-center py-3">
+                Save changes
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

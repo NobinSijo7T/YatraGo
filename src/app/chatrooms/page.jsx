@@ -94,7 +94,7 @@ const ChatRoomsPage = () => {
             </section>
 
             {/* Search & Filter Bar */}
-            <section className="bg-white border-b-4 border-black py-8 px-4 sticky top-16 z-40">
+            <section className="bg-white border-b-4 border-black py-8 px-4 sticky top-28 z-40">
                 <div className="max-w-7xl mx-auto space-y-6">
                     {/* Search */}
                     <form onSubmit={handleSearch} className="w-full md:w-96">

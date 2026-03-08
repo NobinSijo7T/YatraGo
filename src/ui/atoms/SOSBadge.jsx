@@ -74,10 +74,10 @@ const SOSBadge = () => {
 
   return (
     <>
-      {/* SOS Badge - Fixed position next to chat button */}
+      {/* SOS Badge - clean minimal */}
       <button
         onClick={handleSOSClick}
-        className="fixed bottom-8 right-24 z-50 w-14 h-14 bg-red-600 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex items-center justify-center text-2xl font-black text-white cursor-pointer animate-pulse"
+        className="fixed bottom-8 right-24 z-50 w-13 h-13 bg-red-600 hover:bg-red-700 rounded-2xl shadow-[0_4px_14px_rgba(220,38,38,0.5)] hover:shadow-[0_6px_20px_rgba(220,38,38,0.6)] transition-all flex items-center justify-center text-xl text-white cursor-pointer p-3"
         title="Emergency SOS - Send alert to all users"
       >
         🚨
@@ -85,28 +85,31 @@ const SOSBadge = () => {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 max-w-md mx-4">
-            <h2 className="text-2xl font-black mb-4 text-red-600">
-              🚨 CONFIRM SOS ALERT 🚨
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-[0_24px_64px_rgba(0,0,0,0.2)] p-7 max-w-sm mx-4">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+              🚨
+            </div>
+            <h2 className="text-xl font-bold text-center text-gray-900 mb-2">
+              Confirm SOS Alert
             </h2>
-            <p className="mb-6 text-lg">
+            <p className="text-sm text-gray-500 text-center mb-6">
               This will send an emergency alert to ALL logged-in users. Are you sure you need help?
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <button
                 onClick={confirmSOS}
                 disabled={isTriggering}
-                className="flex-1 px-6 py-3 font-bold text-lg bg-red-600 text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3 font-semibold bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isTriggering ? "SENDING..." : "YES, SEND SOS"}
+                {isTriggering ? "Sending..." : "Yes, Send SOS"}
               </button>
               <button
                 onClick={cancelSOS}
                 disabled={isTriggering}
-                className="flex-1 px-6 py-3 font-bold text-lg bg-gray-300 text-black border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] disabled:opacity-50"
+                className="flex-1 py-3 font-semibold bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 disabled:opacity-50 transition-colors"
               >
-                CANCEL
+                Cancel
               </button>
             </div>
           </div>

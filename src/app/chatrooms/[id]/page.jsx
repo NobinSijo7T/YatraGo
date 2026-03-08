@@ -531,7 +531,7 @@ const ChatRoomPage = () => {
             <MainNavbar />
 
             {/* Room Header */}
-            <section className="bg-gradient-to-r from-[#8B5CF6] to-[#00D9FF] border-b-4 border-black py-6 px-4 sticky top-16 z-40">
+            <section className="bg-gradient-to-r from-[#8B5CF6] to-[#00D9FF] border-b-4 border-black py-6 px-4 sticky top-28 z-40">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <button onClick={() => router.push("/chatrooms")} className="w-12 h-12 bg-white border-4 border-black font-black text-xl hover:bg-black hover:text-white transition-colors">

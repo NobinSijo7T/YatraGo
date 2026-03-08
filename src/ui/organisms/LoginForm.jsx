@@ -44,53 +44,56 @@ const LoginForm = () => {
 
   return (
     <div className="w-full max-w-md">
-      {/* Header */}
+      {/* Logo */}
       <div className="mb-8 text-center">
-        <Texts type="heading" className="mb-2">LOGIN</Texts>
-        <div className="h-2 w-24 bg-[#00D9FF] border-4 border-black mx-auto"></div>
+        <div className="inline-flex items-center gap-2 mb-4">
+          <div className="w-9 h-9 rounded-lg overflow-hidden">
+            <img src="/black_ver.png" alt="YathraGo" className="w-full h-full object-contain" />
+          </div>
+          <span className="text-xl font-bold text-[#003580]">YathraGo</span>
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
+        <p className="text-sm text-gray-500 mt-1">Sign in to continue your journey</p>
       </div>
 
-      {/* Form Container */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white border-4 border-black text-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-8"
-      >
-        <FormField
-          label="Email"
-          type="email"
-          name="email"
-          placeholder="your.email@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <FormField
-          label="Password"
-          type="password"
-          name="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      {/* Form */}
+      <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 border border-gray-100">
+        <form onSubmit={handleSubmit}>
+          <FormField
+            label="Email address"
+            type="email"
+            name="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <FormField
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-        {error && (
-          <div className="mb-4 p-3 bg-[#FF6B6B] border-4 border-black">
-            <Texts type="error" className="text-white">{error}</Texts>
-          </div>
-        )}
+          {error && (
+            <div className="mb-4 p-3.5 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
 
-        <Button type="submit" name="login" aria-label="Login Button">
-          LOGIN →
-        </Button>
+          <Button type="submit" name="login" className="w-full justify-center py-3 text-base mt-1">
+            Sign in
+          </Button>
+        </form>
 
-        <div className="mt-6 text-center">
-          <Texts type="info">
-            Not a user?{" "}
-            <Link href="/register" className="font-black underline hover:text-[#00D9FF] transition-colors">
-              Sign-Up Now
-            </Link>
-          </Texts>
-        </div>
-      </form>
+        <p className="mt-5 text-center text-sm text-gray-500">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="font-semibold text-[#003580] hover:underline">
+            Create one
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
