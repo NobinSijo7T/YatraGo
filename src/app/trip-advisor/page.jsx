@@ -69,7 +69,7 @@ const TripAdvisorPage = () => {
       // Determine endpoint based on category
       switch (selectedCategory) {
         case "destinations":
-          endpoint = `/api/destinations`;
+          endpoint = `/api/destinations?${params.toString()}`;
           break;
         case "hotels":
           endpoint = `/api/hotels?${params.toString()}`;
@@ -188,7 +188,7 @@ const TripAdvisorPage = () => {
       </section>
 
       {/* Category Filter */}
-      <section className="bg-white border-b border-gray-200 py-4 px-4 sticky top-28 z-40">
+      <section className="bg-white border-b border-gray-200 py-4 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex gap-2 overflow-x-auto pb-1">
             {categories.map((cat) => (

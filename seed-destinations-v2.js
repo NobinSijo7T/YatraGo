@@ -646,8 +646,8 @@ const destinations = [
       "Travel insurance with medical cover",
     ],
     images: [
-      "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&q=80",
       "https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=800&q=80",
+      "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=800&q=80",
     ],
     tags: ["Ancient History", "Pyramids", "Nile", "Desert", "Diving"],
   },

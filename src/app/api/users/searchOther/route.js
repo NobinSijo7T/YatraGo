@@ -14,14 +14,16 @@ export const GET = async (req, res) => {
     const searchQuery = query
       ? {
           $or: [
+            { name: { $regex: query, $options: "i" } },
             { travelCity: { $regex: query, $options: "i" } },
             { travelCountry: { $regex: query, $options: "i" } },
+            { travelType: { $regex: query, $options: "i" } },
           ],
         }
       : {};
 
     const users = await User.find(searchQuery).select(
-      "name travelCity travelCountry"
+      "name email bio profileImage travelCity travelCountry travelType"
     );
 
     return new Response(JSON.stringify(users), { status: 200 });

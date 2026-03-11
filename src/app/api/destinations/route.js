@@ -7,13 +7,45 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
+    const queryStr = searchParams.get("query");
+    const country = searchParams.get("country");
+    const city = searchParams.get("city");
+    const sortBy = searchParams.get("sortBy") || "name";
 
     let query = {};
     if (category && category !== "all") {
       query.category = category;
     }
 
-    const destinations = await Destination.find(query).sort({ createdAt: -1 });
+    // Search by query string across name, country, continent, capital
+    if (queryStr) {
+      const regex = new RegExp(queryStr, "i");
+      query.$or = [
+        { name: regex },
+        { country: regex },
+        { continent: regex },
+        { capital: regex },
+      ];
+    }
+
+    // Filter by country
+    if (country) {
+      query.country = new RegExp(country, "i");
+    }
+
+    // Filter by city (matched against capital or name)
+    if (city) {
+      const cityRegex = new RegExp(city, "i");
+      if (!queryStr) {
+        query.$or = [{ capital: cityRegex }, { name: cityRegex }];
+      }
+    }
+
+    // Determine sort order
+    let sortOptions = { name: 1 };
+    if (sortBy === "name") sortOptions = { name: 1 };
+
+    const destinations = await Destination.find(query).sort(sortOptions);
 
     return new Response(JSON.stringify(destinations), {
       status: 200,

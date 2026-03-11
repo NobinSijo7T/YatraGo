@@ -16,10 +16,12 @@ const EditProfile = () => {
     profileImage: "",
     travelCity: "",
     travelCountry: "",
+    travelType: "",
   });
 
   const [travelCity, setTravelCity] = useState("");
   const [travelCountry, setTravelCountry] = useState("");
+  const [travelType, setTravelType] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -34,9 +36,11 @@ const EditProfile = () => {
             bio: data.bio,
             travelCity: data.travelCity,
             travelCountry: data.travelCountry,
+            travelType: data.travelType || "",
           });
           setTravelCity(data.travelCity);
           setTravelCountry(data.travelCountry);
+          setTravelType(data.travelType || "");
         } catch (error) {
           console.error("Failed to fetch user data:", error);
         }
@@ -58,8 +62,9 @@ const EditProfile = () => {
       ...formData,
       travelCity,
       travelCountry,
+      travelType,
     });
-  }, [travelCity, travelCountry]);
+  }, [travelCity, travelCountry, travelType]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -139,7 +144,7 @@ const EditProfile = () => {
                 label="Travel City"
                 type="text"
                 name="travelCity"
-                placeholder="City"
+                placeholder="City / Place"
                 value={travelCity}
                 onChange={(e) => setTravelCity(e.target.value)}
               />
@@ -151,6 +156,20 @@ const EditProfile = () => {
                 value={travelCountry}
                 onChange={(e) => setTravelCountry(e.target.value)}
               />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Travel Style</label>
+              <select
+                name="travelType"
+                value={travelType}
+                onChange={(e) => setTravelType(e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#003580] bg-white"
+              >
+                <option value="">Select travel style...</option>
+                {["Adventure","Beach","Cultural","Business","Family","Solo","Backpacking","Luxury"].map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
             </div>
             <div className="pt-2">
               <Button type="submit" name="login" className="w-full justify-center py-3">

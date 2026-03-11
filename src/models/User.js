@@ -30,6 +30,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  travelType: {
+    type: String,
+    default: "",
+  },
   chats: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Chat"
