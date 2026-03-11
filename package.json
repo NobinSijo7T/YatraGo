@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "seed:destinations": "node seed-destinations-v2.js",
     "seed:hotels": "node seed-hotels.mjs",
     "seed:activities": "node seed-activities.mjs",
     "seed:restaurants": "node seed-restaurants.mjs",

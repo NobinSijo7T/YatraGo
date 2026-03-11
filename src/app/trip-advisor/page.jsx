@@ -9,6 +9,7 @@ import HotelCard from "@/ui/molecules/HotelCard";
 import ActivityCard from "@/ui/molecules/ActivityCard";
 import RestaurantCard from "@/ui/molecules/RestaurantCard";
 import TravelStoryCard from "@/ui/molecules/TravelStoryCard";
+import DestinationCard from "@/ui/molecules/DestinationCard";
 import DetailModal from "@/ui/organisms/DetailModal";
 
 const TripAdvisorPage = () => {
@@ -17,7 +18,7 @@ const TripAdvisorPage = () => {
   const searchParams = useSearchParams();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "hotels");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "destinations");
   const [searchQuery, setSearchQuery] = useState(searchParams.get("query") || "");
   const [filters, setFilters] = useState({
     city: searchParams.get("city") || "",
@@ -67,6 +68,9 @@ const TripAdvisorPage = () => {
       
       // Determine endpoint based on category
       switch (selectedCategory) {
+        case "destinations":
+          endpoint = `/api/destinations`;
+          break;
         case "hotels":
           endpoint = `/api/hotels?${params.toString()}`;
           break;
@@ -80,7 +84,7 @@ const TripAdvisorPage = () => {
           endpoint = `/api/travel-stories?${params.toString()}`;
           break;
         default:
-          endpoint = `/api/hotels?${params.toString()}`;
+          endpoint = `/api/destinations`;
       }
       
       const res = await fetch(endpoint, {
@@ -124,6 +128,7 @@ const TripAdvisorPage = () => {
   }
 
   const categories = [
+    { id: "destinations", name: "Destinations", emoji: "🌍" },
     { id: "hotels", name: "Hotels", emoji: "🏨" },
     { id: "activities", name: "Activities", emoji: "🎭" },
     { id: "restaurants", name: "Restaurants", emoji: "🍽️" },
@@ -205,6 +210,7 @@ const TripAdvisorPage = () => {
       </section>
 
       {/* Filters Bar */}
+      {selectedCategory !== "destinations" && (
       <section className="bg-white border-b border-gray-100 py-3 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-wrap gap-2 items-center">
@@ -273,6 +279,7 @@ const TripAdvisorPage = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* Results Grid */}
       <section className="max-w-5xl mx-auto px-4 py-10">
@@ -290,6 +297,8 @@ const TripAdvisorPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {items.map((item) => {
                 switch (selectedCategory) {
+                  case "destinations":
+                    return <DestinationCard key={item._id} destination={item} />;
                   case "hotels":
                     return <HotelCard key={item._id} hotel={item} onClick={() => handleCardClick(item)} />;
                   case "activities":
