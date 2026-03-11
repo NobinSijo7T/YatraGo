@@ -63,15 +63,15 @@ const HomePage = () => {
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative min-h-[88vh] -mt-28 flex flex-col items-center justify-center text-center overflow-hidden">
-        {/* Background */}
+        {/* Background — pointer-events-none so decorative layers never block navbar clicks */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center pointer-events-none"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600&q=85')",
+              "url('/landing.jpg')",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60 pointer-events-none" />
 
         {/* Content */}
         <div className="relative z-10 max-w-4xl mx-auto px-4">

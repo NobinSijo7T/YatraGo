@@ -1,11 +1,11 @@
 import React from "react";
-import Navbar from "../organisms/Navbar";
+import MainNavbar from "../organisms/MainNavbar";
 import Profile from "../organisms/Profile";
 
 const ProfilePage = () => {
   return (
     <div>
-      <Navbar />
+      <MainNavbar />
       <Profile />
     </div>
   );

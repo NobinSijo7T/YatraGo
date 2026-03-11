@@ -1,7 +1,10 @@
-"use client";;
+"use client";
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { animate } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+// CSS for spotlight colors is defined in globals.css under .spotlight-nav-vars
 
 export function SpotlightNavbar({
     items = [
@@ -19,21 +22,15 @@ export function SpotlightNavbar({
     const navRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
     const [hoverX, setHoverX] = useState(null);
-    const [isDark, setIsDark] = useState(false);
 
     // Refs for the "light" positions so we can animate them imperatively
     const spotlightX = useRef(0);
     const ambienceX = useRef(0);
 
+    // Sync active index when the route changes (prop updates from parent)
     useEffect(() => {
-        const checkTheme = () => {
-            setIsDark(document.documentElement.classList.contains('dark'));
-        };
-        checkTheme();
-        const observer = new MutationObserver(checkTheme);
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-        return () => observer.disconnect();
-    }, []);
+        setActiveIndex(defaultActiveIndex);
+    }, [defaultActiveIndex]);
 
     useEffect(() => {
         if (!navRef.current) return;
@@ -118,13 +115,10 @@ export function SpotlightNavbar({
                 <ul className="relative flex items-center h-full px-2 gap-0 z-[10]">
                     {items.map((item, idx) => (
                         <li key={idx} className="relative h-full flex items-center justify-center">
-                            <a
+                            <Link
                                 href={item.href}
                                 data-index={idx}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleItemClick(item, idx);
-                                }}
+                                onClick={() => handleItemClick(item, idx)}
                                 className={cn(
                                     "px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-full",
                                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 dark:focus-visible:ring-white/30",
@@ -134,7 +128,7 @@ export function SpotlightNavbar({
                                         : "text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white"
                                 )}>
                                 {item.label}
-                            </a>
+                            </Link>
                         </li>
                     ))}
                 </ul>
@@ -171,22 +165,6 @@ export function SpotlightNavbar({
                     }} />
 
             </nav>
-            {/* STYLE BLOCK for Dynamic Colors 
-        This allows us to switch the gradient colors cleanly using Tailwind classes 
-        without messy inline conditionals.
-      */}
-            <style jsx>{`
-        nav {
-          /* Light Mode Colors: Dark Gray/Black lights */
-          --spotlight-color: rgba(0,0,0,0.08);
-          --ambience-color: rgba(0,0,0,0.8);
-        }
-        :global(.dark) nav {
-          /* Dark Mode Colors: White lights */
-          --spotlight-color: rgba(255,255,255,0.15);
-          --ambience-color: rgba(255,255,255,1);
-        }
-      `}</style>
         </div>
     );
 }

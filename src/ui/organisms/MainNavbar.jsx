@@ -2,14 +2,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSocket } from "@/context/SocketContext";
 import { SpotlightNavbar } from "@/components/ui/spotlight-navbar";
 
 const MainNavbar = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { socket, isConnected } = useSocket();
   const [showSOSConfirm, setShowSOSConfirm] = useState(false);
@@ -117,7 +116,6 @@ const MainNavbar = () => {
             <SpotlightNavbar
               items={spotlightItems}
               defaultActiveIndex={defaultActiveIndex}
-              onItemClick={(item) => router.push(item.href)}
               className="pt-0"
             />
           </div>
